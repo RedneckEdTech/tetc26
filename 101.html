@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NODE 01: Local Infiltration</title>
+    <style>
+        /* Hacker Terminal Aesthetic */
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        
+        body { 
+            background-color: #050505; 
+            color: #00FF41; 
+            font-family: 'VT323', monospace; 
+            text-align: center; 
+            padding: 20px; 
+            font-size: 24px; 
+            line-height: 1.5;
+            margin: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        /* Full Page HTML5 Canvas Matrix Rain */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        h1, h2 { 
+            color: #00FF41; 
+            text-shadow: 0px 0px 8px rgba(0, 255, 65, 0.6); 
+            letter-spacing: 2px; 
+            text-transform: uppercase;
+        }
+        p { max-width: 800px; margin: 0 auto 20px auto; }
+        
+        /* Interactive Elements */
+        input[type="text"] { 
+            background: #111; 
+            border: 1px solid #00FF41; 
+            color: #00FF41; 
+            padding: 10px; 
+            font-family: 'VT323', monospace; 
+            font-size: 24px; 
+            text-align: center;
+            outline: none; 
+            text-transform: uppercase;
+            width: 300px;
+        }
+        /* Make the placeholder text match the green color */
+        input[type="text"]::placeholder {
+            color: rgba(0, 255, 65, 0.6);
+            opacity: 1;
+        }
+        input[type="text"]:focus {
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+        
+        button { 
+            background: transparent; 
+            border: 2px solid #00FF41; 
+            color: #00FF41; 
+            padding: 10px 20px; 
+            cursor: pointer; 
+            font-family: 'VT323', monospace; 
+            font-size: 24px; 
+            transition: 0.2s; 
+            margin: 10px; 
+            text-transform: uppercase;
+            text-shadow: 0px 0px 5px rgba(0, 255, 65, 0.4);
+            position: relative;
+            z-index: 10;
+        }
+        button:hover { 
+            background: #00FF41; 
+            color: #000; 
+            box-shadow: 0 0 15px #00FF41; 
+            text-shadow: none;
+        }
+        
+        /* Layout & Animation */
+        .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.8s ease-in forwards; }
+        @keyframes fadeIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+        
+        .terminal-box { 
+            border: 1px solid #003b12; 
+            border-left: 4px solid #00FF41;
+            padding: 20px; 
+            margin: 30px auto; 
+            max-width: 800px; 
+            text-align: left; 
+            background: rgba(5, 5, 5, 0.95); 
+            box-shadow: inset 0 0 20px rgba(0, 255, 65, 0.05), 0 0 15px rgba(0,0,0,0.8);
+            position: relative;
+            z-index: 5;
+        }
+        .video-container { 
+            margin: 30px auto; 
+            max-width: 720px; 
+            aspect-ratio: 16/9; 
+            background: #0a0a0a; 
+            border: 1px dashed #00FF41; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: #00FF41; 
+            position: relative;
+            z-index: 5;
+        }
+        
+        /* Navigation Bar */
+        .nav-bar { display: flex; justify-content: center; align-items: center; margin-top: 20px; gap: 20px; flex-wrap: wrap; position: relative; z-index: 10; }
+        
+        .warning-text { color: #ff003c; text-shadow: 0 0 5px rgba(255, 0, 60, 0.5); }
+    </style>
+</head>
+<body>
+
+    <!-- Full Screen Canvas for Matrix Rain -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- STAGE 0: The Password Gate -->
+    <div id="stage-0" class="fade-in">
+        <h1>FIREWALL ACTIVE</h1>
+        <p>Awaiting Decryption Key</p>
+        <input type="text" id="accessCode" placeholder="ENTER KEY" onkeydown="if(event.key === 'Enter') checkPassword()" autofocus>
+        <br>
+        <button onclick="checkPassword()">BYPASS</button>
+        <p id="errorMsg" class="warning-text" style="display: none; margin-top: 10px;">ACCESS DENIED. INVALID CIPHER.</p>
+    </div>
+
+    <!-- STAGE 1: Data Source Selection (The Briefing) -->
+    <div id="stage-1" class="hidden">
+        <h1>NODE 01: LOCAL INFILTRATION</h1>
+        <div class="terminal-box">
+            <p>> SECURE CONNECTION ESTABLISHED...</p>
+            <p>> DECRYPTING MISSION BRIEFING...</p>
+            <p><strong>Cipher:</strong> "Listen up, Operative. The legacy education mainframes have locked the curriculum behind static PDFs and rigid worksheets. We are initiating <strong>Operation: OVERRIDE</strong> to hack the mainframe, liberate the data, and deploy interactive payloads directly to the student terminals."</p>
+            <p>"To breach their firewalls, we need to construct a custom HTML exploit. How will you inject the base parameters into your AI Terminal Agent?"</p>
+        </div>
+        
+        <h2>SELECT INJECTION METHOD</h2>
+        <button onclick="setSource('reference')">ATTACH SECURED FILES</button>
+        <button onclick="setSource('paste')">INJECT RAW TEXT</button>
+        <button onclick="setSource('topic')">RUN HEURISTICS ON TOPIC</button>
+    </div>
+
+    <!-- STAGE 1B: Path Selection -->
+    <div id="stage-1b" class="hidden">
+        <div class="terminal-box">
+            <p><strong>Cipher:</strong> "Data stream acquired. Now, what type of payload are we compiling?"</p>
+        </div>
+        
+        <h2>SELECT PAYLOAD VECTOR</h2>
+        <button onclick="setPath('game')">COMPILE GAMIFIED EXPLOIT</button>
+        <button onclick="setPath('activity')">COMPILE INTERACTIVE SANDBOX</button>
+        
+        <div class="nav-bar">
+            <button onclick="goBack('stage-1b', 'stage-1')">< ABORT</button>
+        </div>
+    </div>
+
+    <!-- STAGE 2: The Branching Path (Dynamic Content) -->
+    <div id="stage-2" class="hidden">
+        <h2 id="pathTitle"></h2>
+        
+        <!-- Video Placeholder -->
+        <div class="video-container" id="videoBox">
+            [ENCRYPTED VIDEO TUTORIAL STREAM]
+        </div>
+
+        <div class="terminal-box">
+            <p>> PAYLOAD SCRIPT GENERATED</p>
+            <p>Copy the command sequence below and execute it in the AI Terminal Agent of your choice.</p>
+            <blockquote id="promptText" style="color: #fff; background: #000; padding: 15px; border-left: 2px solid #00FF41; font-family: monospace; font-size: 18px; line-height: 1.4;"></blockquote>
+            <p style="font-size: 20px; font-weight: bold;">Note: This is a base script. Modify the variables, mechanics, and rules before execution to bypass their filters.</p>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <p>Verify payload structure before deployment:</p>
+                <button onclick="downloadSample()">DOWNLOAD SAMPLE EXEC (.HTML)</button>
+            </div>
+        </div>
+        
+        <div class="nav-bar">
+            <button onclick="goBack('stage-2', 'stage-1b')">< ABORT</button>
+            <button onclick="unlockOSCheck()">EXECUTE SCRIPT</button>
+        </div>
+    </div>
+
+    <!-- STAGE 3: Hardware Scan (New OS Selection) -->
+    <div id="stage-3" class="hidden">
+        <h2>HARDWARE SIGNATURE SCAN</h2>
+        <div class="terminal-box">
+            <p><strong>Cipher:</strong> "Script compiled successfully. I need to identify your local hardware signature to establish the extraction protocol. What system are you running?"</p>
+        </div>
+        <button onclick="setOS('mac')">macOS (APPLE)</button>
+        <button onclick="setOS('pc')">WINDOWS (PC)</button>
+        <button onclick="setOS('chromebook')">CHROMEOS</button>
+        
+        <div class="nav-bar">
+            <button onclick="goBack('stage-3', 'stage-2')">< ABORT</button>
+        </div>
+    </div>
+
+    <!-- STAGE 4: The Boss Fight & Peer Review -->
+    <div id="stage-4" class="hidden">
+        <h2>LOCAL VAULT & RED TEAM INITIATED</h2>
+        <div class="terminal-box">
+            <p><strong>Protocol: Desktop Deployment</strong></p>
+            <!-- Dynamic OS Instructions will render here -->
+            <div id="osInstructions" style="margin-bottom: 20px;"></div>
+            
+            <hr style="border-color: #003b12;">
+            <p class="warning-text"><strong>> RED TEAM EXERCISE INITIATED</strong></p>
+            <p>Swap consoles with a fellow operative. Attempt to break their payload. Are there vulnerabilities? Does the UI shatter? Report bugs back to your AI Terminal and deploy the patches immediately!</p>
+        </div>
+        <div class="nav-bar">
+            <button onclick="goBack('stage-4', 'stage-3')">< ABORT</button>
+            <button onclick="unlockTerminal()">SYSTEMS SECURED. PROCEED.</button>
+        </div>
+    </div>
+
+    <!-- STAGE 5: The Terminal Upload -->
+    <div id="stage-5" class="hidden">
+        <h2>UPLINK TO PROXY SERVER</h2>
+        <div class="terminal-box">
+            <p><strong>Cipher:</strong> "Your localized payload is active, but headquarters needs code verification. Upload your functioning <code>.html</code> file to the Proxy Server."</p>
+            <p>Upon verification, the handler will distribute your Decryption Key for Node 02 at the start of our next briefing.</p>
+        </div>
+        
+        <div class="nav-bar">
+            <button onclick="goBack('stage-5', 'stage-4')">< ABORT</button>
+            <!-- Replace the '#' with your actual Google Form Link -->
+            <button onclick="window.open('#', '_blank')">ACCESS PROXY SERVER</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Full Screen Matrix Rain Effect ---
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%""\'#&_(),.;:?!\\|{}<>[]^~'.split('');
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+
+        const drops = [];
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+
+        function drawMatrix() {
+            // Translucent black background to create trail effect
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0F0'; // Hacker Green
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        
+        setInterval(drawMatrix, 35);
+
+        // Handle resize to keep canvas full screen
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // --- Auto-focus on load ---
+        window.onload = function() {
+            const input = document.getElementById('accessCode');
+            if (input) input.focus();
+        };
+
+        // --- Game Logic & Passwords ---
+        const CURRENT_PASSWORD = "BREACH-01"; 
+        
+        let selectedSource = "";
+        let selectedPath = "";
+
+        const activity_b64 = "PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCwgaW5pdGlhbC1zY2FsZT0xLjAiPgo8dGl0bGU+U2FtcGxlIEFjdGl2aXR5PC90aXRsZT4KPHN0eWxlPgogIGJvZHkgeyBmb250LWZhbWlseTogJ0NvdXJpZXIgTmV3JywgQ291cmllciwgbW9ub3NwYWNlOyBiYWNrZ3JvdW5kLWNvbG9yOiAjMWExYTFhOyBjb2xvcjogI2ZmZjsgdGV4dC1hbGlnbjogY2VudGVyOyBtYXJnaW46IDA7IHBhZGRpbmc6IDIwcHg7IH0KICBoMSB7IGNvbG9yOiAjMDBGRkZGOyB0ZXh0LXNoYWRvdzogMnB4IDJweCAjRkYwMEZGOyB9CiAgLmNvbnRhaW5lciB7IGRpc3BsYXk6IGZsZXg7IGp1c3RpZnktY29udGVudDogc3BhY2UtYXJvdW5kOyBmbGV4LXdyYXA6IHdyYXA7IG1heC13aWR0aDogODAwcHg7IG1hcmdpbjogMCBhdXRvOyB9CiAgLmRyYWdnYWJsZSB7IGJhY2tncm91bmQtY29sb3I6ICNGRjAwRkY7IHBhZGRpbmc6IDEwcHggMjBweDsgbWFyZ2luOiAxMHB4OyBjdXJzb3I6IGdyYWI7IGJvcmRlci1yYWRpdXM6IDVweDsgZm9udC13ZWlnaHQ6IGJvbGQ7IGNvbG9yOiB3aGl0ZTsgdXNlci1zZWxlY3Q6IG5vbmU7IH0KICAuZHJvcHpvbmUgeyBiYWNrZ3JvdW5kLWNvbG9yOiAjMzMzOyBib3JkZXI6IDJweCBkYXNoZWQgIzAwRkZGRjsgcGFkZGluZzogMjBweDsgbWFyZ2luOiAxMHB4OyB3aWR0aDogMjUwcHg7IG1pbi1oZWlnaHQ6IDUwcHg7IGJvcmRlci1yYWRpdXM6IDVweDsgZGlzcGxheTogZmxleDsgYWxpZ24taXRlbXM6IGNlbnRlcjsganVzdGlmeS1jb250ZW50OiBjZW50ZXI7IGZsZXgtZGlyZWN0aW9uOiBjb2x1bW47fQogIC5jb3JyZWN0IHsgYmFja2dyb3VuZC1jb2xvcjogIzAwRkYwMDsgYm9yZGVyLWNvbG9yOiAjMDBGRjAwOyBjb2xvcjogYmxhY2s7IH0KPC9zdHlsZT4KPC9oZWFkPgo8Ym9keT4KPGgxPkludGVyYWN0aXZlIEFjdGl2aXR5IEV4YW1wbGU8L2gxPgo8cD5EcmFnIHRoZSB0ZXJtcyB0byB0aGVpciBjb3JyZWN0IGRlZmluaXRpb25zITwvcD4KPGRpdiBjbGFzcz0iY29udGFpbmVyIiBpZD0idGVybXMiPgogIDxkaXYgY2xhc3M9ImRyYWdnYWJsZSIgZHJhZ2dhYmxlPSJ0cnVlIiBpZD0idGVybTEiIGRhdGEtbWF0Y2g9ImRlZjEiPlNhbXBsZSBUZXJtPC9kaXY+CjwvZGl2Pgo8ZGl2IGNsYXNzPSJjb250YWluZXIiIGlkPSJkZWZpbml0aW9ucyI+CiAgPGRpdiBjbGFzcz0iZHJvcHpvbmUiIGlkPSJkZWYxIj5EZWZpbml0aW9uIG9mIFNhbXBsZSBUZXJtLjwvZGl2Pgo8L2Rpdj4KPHNjcmlwdD4KICBjb25zdCBkcmFnZ2FibGVzID0gZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgnLmRyYWdnYWJsZScpOwogIGNvbnN0IGRyb3B6b25lcyA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoJy5kcm9wem9uZScpOwogIGRyYWdnYWJsZXMuZm9yRWFjaChkcmFnZ2FibGUgPT4gewogICAgZHJhZ2dhYmxlLmFkZEV2ZW50TGlzdGVuZXIoJ2RyYWdzdGFydCcsICgpID0+IHsgZHJhZ2dhYmxlLmNsYXNzTGlzdC5hZGQoJ2RyYWdnaW5nJyk7IH0pOwogICAgZHJhZ2dhYmxlLmFkZEV2ZW50TGlzdGVuZXIoJ2RyYWdlbmQnLCAoKSA9PiB7IGRyYWdnYWJsZS5jbGFzc0xpc3QucmVtb3ZlKCdkcmFnZ2luZycpOyB9KTsKICB9KTsKICBkcm9wem9uZXMuZm9yRWFjaCh6b25lID0+IHsKICAgIHpvbmUuYWRkRXZlbnRMaXN0ZW5lcignZHJhZ292ZXInLCBlID0+IHsgZS5wcmV2ZW50RGVmYXVsdCgpOyB9KTsKICAgIHpvbmUuYWRkRXZlbnRMaXN0ZW5lcignZHJvcCcsIGUgPT4gewogICAgICBlLnByZXZlbnREZWZhdWx0KCk7CiAgICAgIGNvbnN0IGRyYWdnYWJsZSA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoJy5kcmFnZ2luZycpOwogICAgICBpZihkcmFnZ2FibGUgJiYgZHJhZ2dhYmxlLmRhdGFzZXQubWF0Y2ggPT09IHpvbmUuaWQpIHsKICAgICAgICB6b25lLmFwcGVuZENoaWxkKGRyYWdnYWJsZSk7CiAgICAgICAgem9uZS5jbGFzc0xpc3QuYWRkKCdjb3JyZWN0Jyk7CiAgICAgICAgZHJhZ2dhYmxlLnNldEF0dHJpYnV0ZSgnZHJhZ2dhYmxlJywgJ2ZhbHNlJyk7CiAgICAgIH0KICAgIH0pOwogIH0pOwo8L3NjcmlwdD4KPC9ib2R5Pgo8L2h0bWw+";
+        const game_b64 = "PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCwgaW5pdGlhbC1zY2FsZT0xLjAiPgo8dGl0bGU+U2FtcGxlIEdhbWU8L3RpdGxlPgo8c3R5bGU+CiAgYm9keSB7IGJhY2tncm91bmQtY29sb3I6ICMwMDA7IGNvbG9yOiAjMDBGRkZGOyBmb250LWZhbWlseTogJ0NvdXJpZXIgTmV3JywgQ291cmllciwgbW9ub3NwYWNlOyB0ZXh0LWFsaWduOiBjZW50ZXI7IG92ZXJmbG93OiBoaWRkZW47IG1hcmdpbjogMDsgdXNlci1zZWxlY3Q6IG5vbmU7IH0KICAjZ2FtZUJvYXJkIHsgd2lkdGg6IDEwMHZ3OyBoZWlnaHQ6IDgwdmg7IHBvc2l0aW9uOiByZWxhdGl2ZTsgYm9yZGVyLWJvdHRvbTogNXB4IHNvbGlkICNGRjAwRkY7IG92ZXJmbG93OiBoaWRkZW47IH0KICAuZW5lbXkgeyBwb3NpdGlvbjogYWJzb2x1dGU7IGJhY2tncm91bmQ6ICNGRjAwRkY7IGNvbG9yOiB3aGl0ZTsgcGFkZGluZzogNXB4IDEwcHg7IGJvcmRlci1yYWRpdXM6IDNweDsgY3Vyc29yOiBwb2ludGVyOyBmb250LXNpemU6IDE0cHg7IHdoaXRlLXNwYWNlOiBub3dyYXA7IGZvbnQtd2VpZ2h0OiBib2xkOyB9CiAgI2h1ZCB7IGRpc3BsYXk6IGZsZXg7IGp1c3RpZnktY29udGVudDogc3BhY2UtYXJvdW5kOyBwYWRkaW5nOiAyMHB4OyBmb250LXNpemU6IDI0cHg7IHRleHQtc2hhZG93OiAycHggMnB4ICNGRjAwRkY7IH0KICBidXR0b24geyBiYWNrZ3JvdW5kOiAjMDBGRkZGOyBjb2xvcjogIzAwMDsgYm9yZGVyOiBub25lOyBwYWRkaW5nOiAxMHB4IDIwcHg7IGZvbnQtc2l6ZTogMjBweDsgY3Vyc29yOiBwb2ludGVyOyBmb250LWZhbWlseTogaW5oZXJpdDsgZm9udC13ZWlnaHQ6IGJvbGQ7IG1hcmdpbi10b3A6IDIwcHg7IGJvcmRlci1yYWRpdXM6IDVweDt9Cjwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CjxkaXYgaWQ9Imh1ZCI+CiAgPGRpdj5TY29yZTogPHNwYW4gaWQ9InNjb3JlIj4wPC9zcGFuPjwvZGl2Pgo8L2Rpdj4KPGRpdiBpZD0iZ2FtZUJvYXJkIj48L2Rpdj4KPHNjcmlwdD4KICBjb25zdCBib2FyZCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdnYW1lQm9hcmQnKTsKICBjb25zdCBzY29yZUVsID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Njb3JlJyk7CiAgbGV0IHNjb3JlID0gMDsKICBzZXRJbnRlcnZhbCgoKSA9PiB7CiAgICBjb25zdCBlbmVteSA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpOwogICAgZW5lbXkuY2xhc3NOYW1lID0gJ2VuZW15JzsKICAgIGVuZW15LmlubmVyVGV4dCA9ICJDbGljayBNZSEiOwogICAgZW5lbXkuc3R5bGUubGVmdCA9IE1hdGgucmFuZG9tKCkgKiAod2luZG93LmlubmVyV2lkdGggLSAxMjApICsgJ3B4JzsKICAgIGVuZW15LnN0eWxlLnRvcCA9ICcwcHgnOwogICAgZW5lbXkub25jbGljayA9ICgpID0+IHsgc2NvcmUgKz0gMTA7IHNjb3JlRWwuaW5uZXJUZXh0ID0gc2NvcmU7IGVuZW15LnJlbW92ZSgpOyB9OwogICAgYm9hcmQuYXBwZW5kQ2hpbGQoZW5lbXkpOwogICAgbGV0IHRvcCA9IDA7CiAgICBjb25zdCBkcm9wID0gc2V0SW50ZXJ2YWwoKCkgPT4gewogICAgICB0b3AgKz0gMjsgZW5lbXkuc3R5bGUudG9wID0gdG9wICsgJ3B4JzsKICAgICAgaWYodG9wID4gd2luZG93LmlubmVySGVpZ2h0KSB7IGNsZWFySW50ZXJ2YWwoZHJvcCk7IGVuZW15LnJlbW92ZSgpOyB9CiAgICB9LCAzMCk7CiAgfSwgMTAwMCk7Cjwvc2NyaXB0Pgo8L2JvZHk+CjwvaHRtbD4=";
+
+        function checkPassword() {
+            const input = document.getElementById('accessCode').value.trim().toUpperCase();
+            if (input === CURRENT_PASSWORD) {
+                document.getElementById('stage-0').classList.add('hidden');
+                const stage1 = document.getElementById('stage-1');
+                stage1.classList.remove('hidden');
+                stage1.classList.add('fade-in');
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+
+        // Global Back Function
+        function goBack(currentStageId, previousStageId) {
+            const currentStage = document.getElementById(currentStageId);
+            const previousStage = document.getElementById(previousStageId);
+            
+            currentStage.classList.add('hidden');
+            currentStage.classList.remove('fade-in');
+            
+            previousStage.classList.remove('hidden');
+            previousStage.classList.add('fade-in');
+        }
+
+        function setSource(source) {
+            selectedSource = source;
+            document.getElementById('stage-1').classList.add('hidden');
+            const stage1b = document.getElementById('stage-1b');
+            stage1b.classList.remove('hidden');
+            stage1b.classList.add('fade-in');
+        }
+
+        function setPath(choice) {
+            selectedPath = choice;
+            document.getElementById('stage-1b').classList.add('hidden');
+            const stage2 = document.getElementById('stage-2');
+            const title = document.getElementById('pathTitle');
+            const videoBox = document.getElementById('videoBox');
+            const promptText = document.getElementById('promptText');
+
+            let sourceText = "";
+            if (selectedSource === 'reference') {
+                sourceText = "Parse the attached reference materials as the source data.";
+            } else if (selectedSource === 'paste') {
+                sourceText = "Parse the following raw text as the source data: [PASTE YOUR CURRICULUM TEXT HERE].";
+            } else if (selectedSource === 'topic') {
+                sourceText = "Generate high school-level parameters based on this topic: [ENTER YOUR SPECIFIC TOPIC HERE].";
+            }
+
+            if (choice === 'game') {
+                title.innerText = "VECTOR: GAMIFIED EXPLOIT";
+                videoBox.innerHTML = "[ENCRYPTED GAME TUTORIAL STREAM]";
+                promptText.innerText = `Act as an expert educational web developer. Build a highly engaging interactive review game (like a trivia challenge, reaction game, or retro arcade game) with a scoring system and a win/loss state. Optional: Include game mechanics variables such as sudden death or team vs team.
+
+${sourceText}
+
+Output as a single vanilla HTML file with inline CSS/JS and no local assets. Do NOT use CDNs like Tailwind, FontAwesome, or Tone.js.`;
+            } else if (choice === 'activity') {
+                title.innerText = "VECTOR: INTERACTIVE SANDBOX";
+                videoBox.innerHTML = "[ENCRYPTED ACTIVITY TUTORIAL STREAM]";
+                promptText.innerText = `Act as an expert educational web developer. Build a highly engaging interactive activity (like a drag-and-drop matcher, clickable flashcard grid, or interactive diagram).
+
+${sourceText}
+
+Output as a single vanilla HTML file with inline CSS/JS and no local assets. Do NOT use CDNs like Tailwind, FontAwesome, or Tone.js.`;
+            }
+
+            stage2.classList.remove('hidden');
+            stage2.classList.add('fade-in');
+        }
+        
+        function downloadSample() {
+            const b64 = selectedPath === 'game' ? game_b64 : activity_b64;
+            const filename = selectedPath === 'game' ? 'sample-payload-game.html' : 'sample-payload-activity.html';
+            const a = document.createElement('a');
+            a.href = "data:text/html;base64," + b64;
+            a.download = filename;
+            a.click();
+        }
+
+        function unlockOSCheck() {
+            document.getElementById('stage-2').classList.add('hidden');
+            const stage3 = document.getElementById('stage-3');
+            stage3.classList.remove('hidden');
+            stage3.classList.add('fade-in');
+        }
+
+        function setOS(os) {
+            document.getElementById('stage-3').classList.add('hidden');
+            const stage4 = document.getElementById('stage-4');
+            const osBox = document.getElementById('osInstructions');
+            
+            if (os === 'mac') {
+                osBox.innerHTML = "<p>1. Initialize the <strong>TextEdit</strong> application on your macOS.</p><p>2. Format to 'Plain Text' (Format > Make Plain Text) to avoid rich-text corruption.</p><p>3. Inject your raw code and save to the Desktop as <code>payload.html</code>.</p><p>4. Execute the file via Safari or Chrome.</p>";
+            } else if (os === 'pc') {
+                osBox.innerHTML = "<p>1. Initialize the <strong>Notepad</strong> application on your Windows OS.</p><p>2. Inject your raw code. Navigate to File > Save As.</p><p>3. Bypass text formatting by changing 'Save as type' to <strong>All Files (*.*)</strong> and save to the Desktop as <code>payload.html</code>.</p><p>4. Execute the file via your browser.</p>";
+            } else if (os === 'chromebook') {
+                osBox.innerHTML = "<p>1. Initialize the native <strong>Text</strong> application.</p><p>2. Inject your raw code and save the local file as <code>payload.html</code>.</p><p>3. Navigate to your Files app and execute it directly in Chrome.</p>";
+            }
+
+            stage4.classList.remove('hidden');
+            stage4.classList.add('fade-in');
+        }
+
+        function unlockTerminal() {
+            document.getElementById('stage-4').classList.add('hidden');
+            const stage5 = document.getElementById('stage-5');
+            stage5.classList.remove('hidden');
+            stage5.classList.add('fade-in');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NODE 02: Network Deployment</title>
+    <style>
+        /* Hacker Terminal Aesthetic */
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        
+        body { 
+            background-color: #050505; 
+            color: #00FF41; 
+            font-family: 'VT323', monospace; 
+            text-align: center; 
+            padding: 20px; 
+            font-size: 24px; 
+            line-height: 1.5;
+            margin: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        /* Full Page HTML5 Canvas Matrix Rain */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        h1, h2 { 
+            color: #00FF41; 
+            text-shadow: 0px 0px 8px rgba(0, 255, 65, 0.6); 
+            letter-spacing: 2px; 
+            text-transform: uppercase;
+        }
+        p { max-width: 800px; margin: 0 auto 20px auto; }
+        
+        /* Interactive Elements */
+        input[type="text"] { 
+            background: #111; 
+            border: 1px solid #00FF41; 
+            color: #00FF41; 
+            padding: 10px; 
+            font-family: 'VT323', monospace; 
+            font-size: 24px; 
+            text-align: center;
+            outline: none; 
+            text-transform: uppercase;
+            width: 300px;
+        }
+        input[type="text"]::placeholder {
+            color: rgba(0, 255, 65, 0.6);
+            opacity: 1;
+        }
+        input[type="text"]:focus {
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+        
+        button { 
+            background: transparent; 
+            border: 2px solid #00FF41; 
+            color: #00FF41; 
+            padding: 10px 20px; 
+            cursor: pointer; 
+            font-family: 'VT323', monospace; 
+            font-size: 24px; 
+            transition: 0.2s; 
+            margin: 10px; 
+            text-transform: uppercase;
+            text-shadow: 0px 0px 5px rgba(0, 255, 65, 0.4);
+            position: relative;
+            z-index: 10;
+        }
+        button:hover { 
+            background: #00FF41; 
+            color: #000; 
+            box-shadow: 0 0 15px #00FF41; 
+            text-shadow: none;
+        }
+        
+        /* Layout & Animation */
+        .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.8s ease-in forwards; }
+        @keyframes fadeIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+        
+        .terminal-box { 
+            border: 1px solid #003b12; 
+            border-left: 4px solid #00FF41;
+            padding: 20px; 
+            margin: 30px auto; 
+            max-width: 800px; 
+            text-align: left; 
+            background: rgba(5, 5, 5, 0.95); 
+            box-shadow: inset 0 0 20px rgba(0, 255, 65, 0.05), 0 0 15px rgba(0,0,0,0.8);
+            position: relative;
+            z-index: 5;
+            backdrop-filter: blur(2px);
+        }
+        .video-container { 
+            margin: 30px auto; 
+            max-width: 720px; 
+            aspect-ratio: 16/9; 
+            background: #0a0a0a; 
+            border: 1px dashed #00FF41; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: #00FF41; 
+            position: relative;
+            z-index: 5;
+        }
+        
+        /* Navigation Bar */
+        .nav-bar { display: flex; justify-content: center; align-items: center; margin-top: 20px; gap: 20px; flex-wrap: wrap; position: relative; z-index: 10; }
+        
+        .warning-text { color: #ff003c; text-shadow: 0 0 5px rgba(255, 0, 60, 0.5); }
+    </style>
+</head>
+<body>
+
+    <!-- Full Screen Canvas for Matrix Rain -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- STAGE 0: The Password Gate -->
+    <div id="stage-0" class="fade-in">
+        <h1>NETWORK GATEWAY ACTIVE</h1>
+        <p>Awaiting Node 02 Decryption Key</p>
+        <input type="text" id="accessCode" placeholder="ENTER KEY" onkeydown="if(event.key === 'Enter') checkPassword()" autofocus>
+        <br>
+        <button onclick="checkPassword()">BYPASS</button>
+        <p id="errorMsg" class="warning-text" style="display: none; margin-top: 10px;">ACCESS DENIED. INVALID CIPHER.</p>
+    </div>
+
+    <!-- STAGE 1: Payload Status (New Stage) -->
+    <div id="stage-1" class="hidden">
+        <h1>NODE 02: NETWORK DEPLOYMENT</h1>
+        <div class="terminal-box">
+            <p>> SECURE CONNECTION ESTABLISHED...</p>
+            <p>> DECRYPTING MISSION BRIEFING...</p>
+            <p><strong>Cipher:</strong> "Excellent work, Operative. But a local payload isolated on your desktop is useless against the grid. It is time to broadcast."</p>
+            <p>"Before we hijack the district's infrastructure, confirm your asset. Do you have your <code>.html</code> payload from Node 01 ready for deployment?"</p>
+        </div>
+        
+        <h2>PAYLOAD STATUS</h2>
+        <button onclick="checkPayload('ready')">1. PAYLOAD READY</button>
+        <button onclick="checkPayload('need')">2. I NEED A PROVISIONED PAYLOAD</button>
+    </div>
+
+    <!-- STAGE 1B: Data Source Selection (Quest 4: Platform Selection) -->
+    <div id="stage-1b" class="hidden">
+        <div class="terminal-box">
+            <p><strong>Cipher:</strong> "Asset confirmed. Review the district's infrastructure. Which external network array will you hijack to host your HTML payload so the student terminals can access it?"</p>
+        </div>
+        
+        <h2>SELECT TARGET INFRASTRUCTURE</h2>
+        <button onclick="setPlatform('google')">THE GOOGLE ARRAY (GOOGLE SITES)</button>
+        <button onclick="setPlatform('sharepoint')">THE MICROSOFT NODE (SHAREPOINT)</button>
+        <button onclick="setPlatform('github')">OPEN SOURCE REPO (GITHUB PAGES)</button>
+        
+        <div class="nav-bar">
+            <button onclick="goBack('stage-1b', 'stage-1')">< ABORT</button>
+        </div>
+    </div>
+
+    <!-- STAGE 2: Deployment Instructions (Quest 5) -->
+    <div id="stage-2" class="hidden">
+        <h2 id="platformTitle"></h2>
+        
+        <div class="video-container" id="videoBox">
+            <!-- Video gets embedded here dynamically -->
+        </div>
+        
+        <div class="terminal-box">
+            <p style="color: #00FF41; border-bottom: 1px dashed #00FF41; padding-bottom: 10px;">> QUEST 5: DEPLOYMENT PROTOCOL</p>
+            <p><strong>Cipher:</strong> "The channel is open. Copy the exact HTML payload and patch it into the mainframe using these coordinates:"</p>
+            
+            <div id="platformInstructions" style="margin-top: 20px;"></div>
+        </div>
+        
+        <div class="nav-bar">
+            <button onclick="goBack('stage-2', 'stage-1b')">< ABORT</button>
+            <button onclick="unlockQA()">PAYLOAD UPLOADED</button>
+        </div>
+    </div>
+
+    <!-- STAGE 3: Mobile Testing (Quest 6) -->
+    <div id="stage-3" class="hidden">
+        <h2>QUALITY ASSURANCE SCAN</h2>
+        <div class="terminal-box">
+            <p style="color: #00FF41; border-bottom: 1px dashed #00FF41; padding-bottom: 10px;">> QUEST 6: MOBILE INTEGRITY CHECK</p>
+            <p><strong>Cipher:</strong> "The signal is pulsing, but we must verify its stability on the receiving end. Grab your mobile scanning device (smartphone)."</p>
+            <p>1. Finalize the <strong>Publish</strong> command on your chosen network array to push the site live.</p>
+            <p>2. Open the live URL on your mobile device.</p>
+            <p>3. Verify that the UI layout does not shatter and buttons are accessible.</p>
+            <hr style="border-color: #003b12;">
+            <p class="warning-text"><strong>> VULNERABILITY DETECTED?</strong></p>
+            <p>If the layout breaks on mobile, return to your AI Terminal. Instruct it to "Fix the responsive layout so it works perfectly on small mobile screens." Replace your old code with the new patch.</p>
+        </div>
+        
+        <div class="nav-bar">
+            <button onclick="goBack('stage-3', 'stage-2')">< ABORT</button>
+            <button onclick="unlockTerminal()">QA PASSED. LINK SECURE.</button>
+        </div>
+    </div>
+
+    <!-- STAGE 4: The Terminal Upload -->
+    <div id="stage-4" class="hidden">
+        <h2>UPLINK TO PROXY SERVER</h2>
+        <div class="terminal-box">
+            <p><strong>Cipher:</strong> "The broadcast is live across the grid. We need to log the coordinates."</p>
+            <p>Copy the public, live URL of your published site and submit it to the Proxy Server.</p>
+            <p>Upon verification, the handler will distribute your Decryption Key for the final Node.</p>
+        </div>
+        
+        <div class="nav-bar">
+            <button onclick="goBack('stage-4', 'stage-3')">< ABORT</button>
+            <!-- Replace the '#' with your actual Google Form Link -->
+            <button onclick="window.open('#', '_blank')">ACCESS PROXY SERVER</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Full Screen Matrix Rain Effect ---
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // FIXED: Replaced {{}} with {} to prevent GitHub Pages Jekyll build errors
+        const matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%""\'#&_(),.;:?!\\|{}<>[]^~'.split('');
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+
+        const drops = [];
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0F0'; 
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        
+        setInterval(drawMatrix, 35);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        window.onload = function() {
+            const input = document.getElementById('accessCode');
+            if (input) input.focus();
+        };
+
+        // --- Game Logic & Passwords ---
+        const CURRENT_PASSWORD = "UPLINK-02"; 
+        
+        const sampleGameB64 = "PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPHRpdGxlPkdyYWR1YXRpb24gVHJhY2tlcjogU3ViamVjdCBNYXRjaGluZzwvdGl0bGU+CjxzdHlsZT4KICBib2R5IHsgZm9udC1mYW1pbHk6ICdTZWdvZSBVSScsIFRhaG9tYSwgR2VuZXZhLCBWZXJkYW5hLCBzYW5zLXNlcmlmOyBiYWNrZ3JvdW5kLWNvbG9yOiAjMWExYTFhOyBjb2xvcjogI2ZmZjsgdGV4dC1hbGlnbjogY2VudGVyOyBwYWRkaW5nOiAyMHB4OyB9CiAgaDEgeyBjb2xvcjogIzAwRkY0MTsgdGV4dC10cmFuc2Zvcm06IHVwcGVyY2FzZTsgbGV0dGVyLXNwYWNpbmc6IDJweDt9CiAgcCB7IGZvbnQtc2l6ZTogMThweDsgY29sb3I6ICNhYWE7IH0KICAuY29udGFpbmVyIHsgZGlzcGxheTogZmxleDsganVzdGlmeS1jb250ZW50OiBjZW50ZXI7IGdhcDogNDBweDsgbWFyZ2luLXRvcDogMzBweDsgZmxleC13cmFwOiB3cmFwOyB9CiAgLmNvbHVtbiB7IGRpc3BsYXk6IGZsZXg7IGZsZXgtZGlyZWN0aW9uOiBjb2x1bW47IGdhcDogMTVweDsgfQogIC5kcmFnZ2FibGUgeyBiYWNrZ3JvdW5kLWNvbG9yOiAjMDBGRjQxOyBjb2xvcjogIzAwMDsgcGFkZGluZzogMTVweDsgYm9yZGVyLXJhZGl1czogNHB4OyBjdXJzb3I6IGdyYWI7IGZvbnQtd2VpZ2h0OiBib2xkOyB1c2VyLXNlbGVjdDogbm9uZTsgd2lkdGg6IDIyMHB4OyBib3JkZXI6IDJweCBzb2xpZCAjMDBGRjQxOyB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlO30KICAuZHJvcHpvbmUgeyBiYWNrZ3JvdW5kLWNvbG9yOiAjMjIyOyBib3JkZXI6IDJweCBkYXNoZWQgIzAwRkY0MTsgcGFkZGluZzogMTVweDsgYm9yZGVyLXJhZGl1czogNHB4OyBtaW4taGVpZ2h0OiA1MHB4OyB3aWR0aDogMjIwcHg7IGRpc3BsYXk6IGZsZXg7IGFsaWduLWl0ZW1zOiBjZW50ZXI7IGp1c3RpZnktY29udGVudDogY2VudGVyOyBmbGV4LWRpcmVjdGlvbjogY29sdW1uOyBmb250LXdlaWdodDogYm9sZDsgY29sb3I6ICM1NTU7IHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7fQogIC5jb3JyZWN0IHsgYmFja2dyb3VuZC1jb2xvcjogIzAwRkY0MTsgYm9yZGVyLWNvbG9yOiAjMDBGRjQxOyBjb2xvcjogIzAwMDsgfQogICNjcmVkaXRzIHsgZm9udC1zaXplOiAyNHB4OyBmb250LXdlaWdodDogYm9sZDsgbWFyZ2luLXRvcDogMzBweDsgY29sb3I6ICNGRjAwRkY7IH0KPC9zdHlsZT4KPC9oZWFkPgo8Ym9keT4KICA8aDE+SGlnaCBTY2hvb2wgR3JhZHVhdGlvbiBQcm90b2NvbDwvaDE+CiAgPHA+RHJhZyB0aGUgcmVxdWlyZWQgc3ViamVjdHMgdG8gdGhlIGNvcnJlY3QgSGlnaCBTY2hvb2wgWWVhciB0byBlYXJuIHlvdXIgY3JlZGl0cyBmb3IgZ3JhZHVhdGlvbiE8L3A+CiAgPGRpdiBpZD0iY3JlZGl0cyI+Q3JlZGl0cyBBY3F1aXJlZDogPHNwYW4gaWQ9InNjb3JlIj4wPC9zcGFuPiAvIDQ8L2Rpdj4KICAKICA8ZGl2IGNsYXNzPSJjb250YWluZXIiPgogICAgPGRpdiBjbGFzcz0iY29sdW1uIiBpZD0idGVybXMiPgogICAgICA8ZGl2IGNsYXNzPSJkcmFnZ2FibGUiIGRyYWdnYWJsZT0idHJ1ZSIgaWQ9InRlcm0xIiBkYXRhLW1hdGNoPSJkZWYxIj5BbGdlYnJhIEkgJiBFbmdsaXNoIEk8L2Rpdj4KICAgICAgPGRpdiBjbGFzcz0iZHJhZ2dhYmxlIiBkcmFnZ2FibGU9InRydWUiIGlkPSJ0ZXJtMiIgZGF0YS1tYXRjaD0iZGVmMiI+R2VvbWV0cnkgJiBCaW9sb2d5PC9kaXY+CiAgICAgIDxkaXYgY2xhc3M9ImRyYWdnYWJsZSIgZHJhZ2dhYmxlPSJ0cnVlIiBpZD0idGVybTMiIGRhdGEtbWF0Y2g9ImRlZjMiPkFsZ2VicmEgSUkgJiBDaGVtaXN0cnk8L2Rpdj4KICAgICAgPGRpdiBjbGFzcz0iZHJhZ2dhYmxlIiBkcmFnZ2FibGU9InRydWUiIGlkPSJ0ZXJtNCIgZGF0YS1tYXRjaD0iZGVmNCI+UHJlLUNhbGN1bHVzICYgUGh5c2ljczwvZGl2PgogICAgPC9kaXY+CiAgICA8ZGl2IGNsYXNzPSJjb2x1bW4iIGlkPSJkZWZpbml0aW9ucyI+CiAgICAgIDxkaXYgY2xhc3M9ImRyb3B6b25lIiBpZD0iZGVmMSI+RnJlc2htYW4gKFllYXIgMSk8L2Rpdj4KICAgICAgPGRpdiBjbGFzcz0iZHJvcHpvbmUiIGlkPSJkZWYyIj5Tb3Bob21vcmUgKFllYXIgMik8L2Rpdj4KICAgICAgPGRpdiBjbGFzcz0iZHJvcHpvbmUiIGlkPSJkZWYzIj5KdW5pb3IgKFllYXIgMyk8L2Rpdj4KICAgICAgPGRpdiBjbGFzcz0iZHJvcHpvbmUiIGlkPSJkZWY0Ij5TZW5pb3IgKFllYXIgNCk8L2Rpdj4KICAgIDwvZGl2PgogIDwvZGl2PgoKICA8c2NyaXB0PgogICAgbGV0IHNjb3JlID0gMDsKICAgIGNvbnN0IHNjb3JlRWwgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc2NvcmUnKTsKICAgIGNvbnN0IGRyYWdnYWJsZXMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCcuZHJhZ2dhYmxlJyk7CiAgICBjb25zdCBkcm9wem9uZXMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCcuZHJvcHpvbmUnKTsKICAgIAogICAgZHJhZ2dhYmxlcy5mb3JFYWNoKGRyYWdnYWJsZSA9PiB7CiAgICAgIGRyYWdnYWJsZS5hZGRFdmVudExpc3RlbmVyKCdkcmFnc3RhcnQnLCAoKSA9PiB7IGRyYWdnYWJsZS5jbGFzc0xpc3QuYWRkKCdkcmFnZ2luZycpOyB9KTsKICAgICAgZHJhZ2dhYmxlLmFkZEV2ZW50TGlzdGVuZXIoJ2RyYWdlbmQnLCAoKSA9PiB7IGRyYWdnYWJsZS5jbGFzc0xpc3QucmVtb3ZlKCdkcmFnZ2luZycpOyB9KTsKICAgIH0pOwogICAgCiAgICBkcm9wem9uZXMuZm9yRWFjaCh6b25lID0+IHsKICAgICAgem9uZS5hZGRFdmVudExpc3RlbmVyKCdkcmFnb3ZlcicsIGUgPT4geyBlLnByZXZlbnREZWZhdWx0KCk7IH0pOwogICAgICB6b25lLmFkZEV2ZW50TGlzdGVuZXIoJ2Ryb3AnLCBlID0+IHsKICAgICAgICBlLnByZXZlbnREZWZhdWx0KCk7CiAgICAgICAgY29uc3QgZHJhZ2dhYmxlID0gZG9jdW1lbnQucXVlcnlTZWxlY3RvcignLmRyYWdnaW5nJyk7CiAgICAgICAgaWYoZHJhZ2dhYmxlICYmIGRyYWdnYWJsZS5kYXRhc2V0Lm1hdGNoID09PSB6b25lLmlkKSB7CiAgICAgICAgICB6b25lLmFwcGVuZENoaWxkKGRyYWdnYWJsZSk7CiAgICAgICAgICB6b25lLmNsYXNzTGlzdC5hZGQoJ2NvcnJlY3QnKTsKICAgICAgICAgIGRyYWdnYWJsZS5zZXRBdHRyaWJ1dGUoJ2RyYWdnYWJsZScsICdmYWxzZScpOwogICAgICAgICAgem9uZS5zdHlsZS5jb2xvciA9ICcjMDAwJzsKICAgICAgICAgIHNjb3JlKys7CiAgICAgICAgICBzY29yZUVsLmlubmVyVGV4dCA9IHNjb3JlOwogICAgICAgICAgaWYgKHNjb3JlID09PSA0KSB7CiAgICAgICAgICAgIHNldFRpbWVvdXQoKCkgPT4gYWxlcnQoIlNZU1RFTSBPVkVSUklERSBDT01QTEVURTogR3JhZHVhdGlvbiBSZXF1aXJlbWVudHMgTWV0ISIpLCAzMDApOwogICAgICAgICAgfQogICAgICAgIH0KICAgICAgfSk7CiAgICB9KTsKICA8L3NjcmlwdD4KPC9ib2R5Pgo8L2h0bWw+";
+
+        function checkPassword() {
+            const input = document.getElementById('accessCode').value.trim().toUpperCase();
+            if (input === CURRENT_PASSWORD) {
+                document.getElementById('stage-0').classList.add('hidden');
+                const stage1 = document.getElementById('stage-1');
+                stage1.classList.remove('hidden');
+                stage1.classList.add('fade-in');
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+
+        // Global Back Function
+        function goBack(currentStageId, previousStageId) {
+            const currentStage = document.getElementById(currentStageId);
+            const previousStage = document.getElementById(previousStageId);
+            
+            currentStage.classList.add('hidden');
+            currentStage.classList.remove('fade-in');
+            
+            previousStage.classList.remove('hidden');
+            previousStage.classList.add('fade-in');
+        }
+
+        function checkPayload(status) {
+            if (status === 'need') {
+                const a = document.createElement('a');
+                a.href = "data:text/html;base64," + sampleGameB64;
+                a.download = 'graduation-matching.html';
+                a.click();
+            }
+            document.getElementById('stage-1').classList.add('hidden');
+            const stage1b = document.getElementById('stage-1b');
+            stage1b.classList.remove('hidden');
+            stage1b.classList.add('fade-in');
+        }
+
+        function setPlatform(platform) {
+            document.getElementById('stage-1b').classList.add('hidden');
+            const stage2 = document.getElementById('stage-2');
+            const title = document.getElementById('platformTitle');
+            const instructions = document.getElementById('platformInstructions');
+            const videoBox = document.getElementById('videoBox');
+
+            if (platform === 'google') {
+                title.innerText = "TARGET: THE GOOGLE ARRAY";
+                videoBox.innerHTML = '<video width="100%" height="100%" controls controlsList="nodownload" oncontextmenu="return false;" style="outline: none;"><source src="google-array.mp4" type="video/mp4">Your browser does not support the video tag.</video>';
+                instructions.innerHTML = "<p>1. Access <code>sites.google.com</code> and initialize a blank site.</p><p>2. Double-click the empty grid and select the yellow <strong>&lt; &gt; Embed</strong> module.</p><p>3. Switch to the <strong>Embed code</strong> tab.</p><p>4. Inject your complete raw HTML payload and execute (Insert).</p><p>5. Resize the module boundaries to ensure full visibility.</p>";
+            } else if (platform === 'sharepoint') {
+                title.innerText = "TARGET: THE MICROSOFT NODE";
+                videoBox.innerHTML = '<video width="100%" height="100%" controls controlsList="nodownload" oncontextmenu="return false;" style="outline: none;"><source src="sharepoint-array.mp4" type="video/mp4">Your browser does not support the video tag.</video>';
+                instructions.innerHTML = "<p>1. Access your Microsoft 365 dashboard and initialize a blank SharePoint Page.</p><p>2. Click the <strong>+</strong> icon to deploy a new web part.</p><p>3. Search for and select the <strong>Embed</strong> module.</p><p>4. Inject your raw HTML code directly into the terminal field.</p><p class='warning-text'><em>*Note: If the sysadmins have blocked raw embeds on your node, upload your .html file to the Document Library, copy its sharing link, and use the 'File Viewer' web part instead.</em></p>";
+            } else if (platform === 'github') {
+                title.innerText = "TARGET: OPEN SOURCE REPO";
+                videoBox.innerHTML = '<video width="100%" height="100%" controls controlsList="nodownload" oncontextmenu="return false;" style="outline: none;"><source src="github-array.mp4" type="video/mp4">Your browser does not support the video tag.</video>';
+                instructions.innerHTML = "<p>1. Access <code>github.com</code> and initialize a New Repository (Public).</p><p>2. Click <strong>Add file > Upload files</strong> to upload your <code>payload.html</code> file to the root directory.</p><p>3. Navigate to repository <strong>Settings</strong> > <strong>Pages</strong>.</p><p>4. Under Build and deployment, change the source branch to <strong>main</strong> and Save.</p><p>5. Await network propagation (1-2 minutes) for your live URL.</p>";
+            }
+
+            stage2.classList.remove('hidden');
+            stage2.classList.add('fade-in');
+        }
+
+        function unlockQA() {
+            document.getElementById('stage-2').classList.add('hidden');
+            const stage3 = document.getElementById('stage-3');
+            stage3.classList.remove('hidden');
+            stage3.classList.add('fade-in');
+        }
+
+        function unlockTerminal() {
+            document.getElementById('stage-3').classList.add('hidden');
+            const stage4 = document.getElementById('stage-4');
+            stage4.classList.remove('hidden');
+            stage4.classList.add('fade-in');
+        }
+    </script>
+</body>
+</html>
