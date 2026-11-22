@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE MATRIX: Instructor Portal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --matrix-green: #00FF41;
+            --dark-bg: #030303;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--matrix-green);
+            font-family: 'VT323', monospace;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            user-select: none;
+        }
+
+        /* Matrix Digital Rain Canvas */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        /* Screen Containers */
+        .screen {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 1.5s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Typography & Effects */
+        .typewriter-text {
+            font-size: 36px;
+            letter-spacing: 2px;
+            min-height: 50px;
+            text-shadow: 0px 0px 10px rgba(0, 255, 65, 0.8);
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 15px;
+            height: 30px;
+            background-color: var(--matrix-green);
+            animation: blink 1s step-end infinite;
+            vertical-align: bottom;
+            margin-left: 5px;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* General Buttons */
+        .btn-activate {
+            background: transparent;
+            border: 2px solid var(--matrix-green);
+            color: var(--matrix-green);
+            padding: 15px 30px;
+            font-family: 'VT323', monospace;
+            font-size: 28px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 40px;
+            transition: all 0.3s;
+            box-shadow: inset 0 0 10px rgba(0, 255, 65, 0.2);
+        }
+        .btn-activate:hover {
+            background: var(--matrix-green);
+            color: #000;
+            box-shadow: 0 0 20px var(--matrix-green);
+        }
+
+        /* HTML5 Video Container */
+        .video-container {
+            border: 2px solid #003b12;
+            border-top: 4px solid var(--matrix-green);
+            background: rgba(0, 10, 0, 0.9);
+            width: 800px;
+            max-width: 90vw;
+            box-shadow: inset 0 0 30px rgba(0, 255, 65, 0.1), 0 0 20px rgba(0, 0, 0, 0.9);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 40px;
+            min-height: 450px; /* added to maintain shape if video fails */
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .transmission-header {
+            color: #fff;
+            border-bottom: 1px dashed var(--matrix-green);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 20px;
+            text-align: left;
+            z-index: 2;
+        }
+
+        video {
+            width: 100%;
+            display: block;
+            background-color: #000;
+            flex-grow: 1;
+            z-index: 1;
+        }
+
+        #video-error {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ff3333;
+            text-align: center;
+            font-size: 24px;
+            text-shadow: 0 0 10px rgba(255,0,0,0.5);
+            width: 80%;
+            z-index: 20;
+            background: rgba(0,0,0,0.8);
+            padding: 20px;
+            border: 1px dashed #ff3333;
+        }
+
+        /* Pill Buttons */
+        .pill-container {
+            display: flex;
+            gap: 50px;
+            justify-content: center;
+        }
+
+        .pill {
+            border: none;
+            padding: 15px 50px;
+            font-size: 32px;
+            font-family: 'VT323', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 50px;
+            color: white;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Pill order updated: Red on left, Blue on right */
+        .red-pill {
+            background: linear-gradient(145deg, #ff3333, #990000);
+            box-shadow: 0 10px 20px rgba(255, 0, 0, 0.3), inset 0px 5px 10px rgba(255,150,150,0.5);
+            border: 2px solid #ff4d4d;
+        }
+
+        .blue-pill {
+            background: linear-gradient(145deg, #3333ff, #000099);
+            box-shadow: 0 10px 20px rgba(0, 0, 255, 0.3), inset 0px 5px 10px rgba(150,150,255,0.5);
+            border: 2px solid #4d4dff;
+        }
+
+        .pill:hover {
+            transform: scale(1.1) translateY(-5px);
+        }
+
+        .red-pill:hover {
+            box-shadow: 0 15px 30px rgba(255, 0, 0, 0.6), inset 0px 5px 10px rgba(255,150,150,0.8);
+            text-shadow: 0 0 10px #fff;
+        }
+
+        .blue-pill:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 255, 0.6), inset 0px 5px 10px rgba(150,150,255,0.8);
+            text-shadow: 0 0 10px #fff;
+        }
+
+        /* Reboot Screen */
+        #reboot-screen {
+            justify-content: flex-start;
+            align-items: flex-start;
+            text-align: left;
+            padding: 40px;
+            box-sizing: border-box;
+            background-color: #000;
+        }
+
+        .reboot-line {
+            font-size: 22px;
+            margin: 5px 0;
+            color: #d3d3d3;
+            font-family: monospace;
+        }
+
+        /* Node Selection Screen */
+        .node-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 40px;
+            border: 1px solid var(--matrix-green);
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .node-btn {
+            background: rgba(0, 255, 65, 0.05);
+            border: 1px solid var(--matrix-green);
+            color: var(--matrix-green);
+            padding: 20px 40px;
+            font-family: 'VT323', monospace;
+            font-size: 32px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            width: 600px;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .node-btn::after {
+            content: "[ ENTER ]";
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .node-btn:hover {
+            background: var(--matrix-green);
+            color: #000;
+            box-shadow: 0 0 20px var(--matrix-green);
+            transform: translateX(10px);
+        }
+        
+        .node-btn:hover::after {
+            opacity: 1;
+        }
+
+        .node-title {
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(0, 255, 65, 0.8);
+        }
+        
+        .node-subtitle {
+            font-size: 24px;
+            color: #aaa;
+            margin-bottom: 40px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Background Matrix Rain -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- STAGE 1: The Wake Up Call -->
+    <div id="intro-screen" class="screen">
+        <div class="typewriter-text"><span id="typewriter"></span><span class="cursor"></span></div>
+        <button id="activate-btn" class="btn-activate hidden" onclick="launchMorpheus()">Follow the white rabbit</button>
+    </div>
+
+    <!-- STAGE 2: The Choice (HTML5 Video Embed) -->
+    <div id="morpheus-screen" class="screen hidden">
+        <div class="video-container">
+            <div class="transmission-header">
+                <span>> SECURE VIDEO UPLINK ESTABLISHED</span>
+                <span>ID: MORPHEUS</span>
+            </div>
+            <!-- Standard HTML5 Video Player -->
+            <video id="morpheus-video" controls autoplay>
+                <source src="./morpheus_intro.mp4" type="video/mp4" onerror="handleVideoError()">
+                Your browser does not support the video tag.
+            </video>
+            <!-- Error message if video fails to load -->
+            <div id="video-error" class="hidden">
+                [ERR] VIDEO SIGNAL LOST<br><br>
+                <span style="font-size: 18px; color: var(--matrix-green);">SYSTEM DIAGNOSTIC: File "morpheus_intro.mp4" not found. <br>Please ensure the video file is placed in the exact same folder as this HTML file and matches the filename exactly.</span>
+            </div>
+        </div>
+        
+        <div class="pill-container fade-in" style="animation-delay: 1s; opacity: 0;">
+            <button class="pill red-pill" onclick="selectRedPill()">Take Red Pill</button>
+            <button class="pill blue-pill" onclick="selectBluePill()">Take Blue Pill</button>
+        </div>
+    </div>
+
+    <!-- STAGE 3A: The Blue Pill (Reboot sequence) -->
+    <div id="reboot-screen" class="screen hidden">
+        <div id="reboot-console"></div>
+    </div>
+
+    <!-- STAGE 3B: The Red Pill (Node Selection) -->
+    <div id="selection-screen" class="screen hidden">
+        <div class="node-menu">
+            <div style="text-align: center;">
+                <h1 class="node-title">CONSTRUCT LOADED</h1>
+                <p class="node-subtitle">Select your deployment vector, Operative.</p>
+            </div>
+            
+            <button class="node-btn" onclick="navigateToNode('101.html')">
+                <span>> NODE 01: Local Infiltration</span>
+            </button>
+            <button class="node-btn" onclick="navigateToNode('201.html')">
+                <span>> NODE 02: Network Deployment</span>
+            </button>
+            <button class="node-btn" onclick="navigateToNode('301.html')">
+                <span>> NODE 03: The Arcade Architect</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /* --- Typing Effect Logic --- */
+        const introSequence = [
+            "Wake up, Neo...",
+            "The Matrix has you...",
+            "Follow the white rabbit.",
+            "Knock, knock, Neo."
+        ];
+        
+        async function typeText(text, elementId, speed = 120) {
+            const el = document.getElementById(elementId);
+            el.innerHTML = "";
+            for (let i = 0; i < text.length; i++) {
+                if(text.charAt(i) === ' ') {
+                    el.innerHTML += '&nbsp;';
+                } else {
+                    el.innerHTML += text.charAt(i);
+                }
+                // Randomize typing speed slightly for realism
+                await new Promise(r => setTimeout(r, speed + (Math.random() * 50)));
+            }
+        }
+
+        async function playIntro() {
+            for(let i = 0; i < introSequence.length; i++) {
+                await typeText(introSequence[i], "typewriter");
+                await new Promise(r => setTimeout(r, 1200)); // Pause between lines
+                if (i < introSequence.length - 1) {
+                    document.getElementById("typewriter").innerHTML = ""; // Clear for next line
+                }
+            }
+            // Show activate button
+            const btn = document.getElementById("activate-btn");
+            btn.classList.remove("hidden");
+            btn.classList.add("fade-in");
+        }
+
+        // Start intro on load
+        window.onload = playIntro;
+
+        /* --- Navigation & Choice Logic --- */
+        function handleVideoError() {
+            document.getElementById('morpheus-video').style.opacity = '0.1';
+            document.getElementById('video-error').classList.remove('hidden');
+        }
+
+        function launchMorpheus() {
+            document.getElementById("intro-screen").classList.add("hidden");
+            const morpheusScreen = document.getElementById("morpheus-screen");
+            morpheusScreen.classList.remove("hidden");
+            morpheusScreen.classList.add("fade-in");
+            
+            // Attempt to auto-play the video if browser policy allows
+            const video = document.getElementById("morpheus-video");
+            if(video) {
+                video.play().catch(e => console.log("Auto-play prevented by browser."));
+            }
+        }
+
+        async function selectBluePill() {
+            // Stop video if it's playing
+            const video = document.getElementById("morpheus-video");
+            if(video) video.pause();
+
+            document.getElementById("morpheus-screen").classList.add("hidden");
+            
+            // Switch styles to generic BIOS hacker reboot
+            document.body.style.backgroundColor = "#000";
+            document.body.style.color = "#d3d3d3";
+            const rebootScreen = document.getElementById("reboot-screen");
+            rebootScreen.classList.remove("hidden");
+            
+            const rebootLines = [
+                "INITIATING KERNEL REBOOT...",
+                "LOADING BIOS v4.20.69...",
+                "CHECKING MEMORY... OK",
+                "FLUSHING CACHE... OK",
+                "WIPING TRACE LOGS... OK",
+                "DISCONNECTING NEURAL LINK...",
+                "SYSTEM HALTED.",
+                "REBOOTING..."
+            ];
+            
+            const consoleDiv = document.getElementById("reboot-console");
+            
+            for(let line of rebootLines) {
+                const p = document.createElement("div");
+                p.className = "reboot-line";
+                p.innerText = line;
+                consoleDiv.appendChild(p);
+                await new Promise(r => setTimeout(r, 300 + Math.random() * 600));
+            }
+            
+            setTimeout(() => {
+                window.location.href = "https://www.google.com";
+            }, 800);
+        }
+
+        function selectRedPill() {
+            // Stop video if it's playing
+            const video = document.getElementById("morpheus-video");
+            if(video) video.pause();
+
+            document.getElementById("morpheus-screen").classList.add("hidden");
+            
+            // Activate Digital Rain
+            const canvas = document.getElementById("matrix-canvas");
+            canvas.style.opacity = 1;
+            startMatrixRain();
+            
+            // Delay to let the rain fall before showing the menu
+            setTimeout(() => {
+                const selectionScreen = document.getElementById("selection-screen");
+                selectionScreen.classList.remove("hidden");
+                selectionScreen.classList.add("fade-in");
+            }, 1500);
+        }
+
+        function navigateToNode(url) {
+            // Flash screen green slightly before redirecting
+            document.body.style.transition = "background 0.2s";
+            document.body.style.backgroundColor = "#00FF41";
+            setTimeout(() => {
+                window.location.href = url;
+            }, 200);
+        }
+
+        /* --- Full Screen Matrix Rain Effect --- */
+        function startMatrixRain() {
+            const canvas = document.getElementById('matrix-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレゲゼデベペオォコソトノホモヨョロゴゾドボポヴッン';
+            const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const nums = '0123456789';
+            // Custom symbols added to the standard matrix mix
+            const symbols = '$+-*/=%""\'#&_(),.;:?!\\|{}<>[]^~';
+            const alphabet = katakana + latin + nums + symbols;
+            
+            const fontSize = 18;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+            for (let x = 0; x < columns; x++) {
+                drops[x] = Math.random() * -100; // Randomize start positions above screen
+            }
+            
+            function draw() {
+                // Translucent black background creates the trail effect
+                ctx.fillStyle = 'rgba(3, 3, 3, 0.08)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#0F0'; // Matrix Green
+                ctx.font = fontSize + 'px monospace';
+                
+                for (let i = 0; i < drops.length; i++) {
+                    // Don't draw if it's still "above" the screen (delaying the start)
+                    if(drops[i] > 0) {
+                        const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                        
+                        // Occasionally draw a white character for the "leading" drop effect
+                        if(Math.random() > 0.95) {
+                            ctx.fillStyle = '#FFF';
+                            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                            ctx.fillStyle = '#0F0';
+                        } else {
+                            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                        }
+                    }
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            
+            setInterval(draw, 35);
+            
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+    </script>
+</body>
+</html>
