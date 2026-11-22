@@ -1,0 +1,2333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="tool">
+  <meta name="design-style" content="sonnet">
+  <title>Chamber of Disengagement: The Dual-Vector Counter-Curse</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+
+      /* Page and surfaces: candlelit dark parchment */
+      --background: #1c1714;
+      --surface-container-low: #231c18;
+      --surface-container: #2a221d;
+      --surface-container-high: #352b24;
+
+      /* Ink */
+      --on-surface: #efe6d4;
+      --on-surface-variant: #c4b8a4;
+
+      /* Rules & antique gold */
+      --outline: #c9a35a;
+      --outline-variant: #5e4b32;
+
+      /* Accents: burgundy / oxblood + hunter sage */
+      --primary: #7d1d2d;
+      --primary-hover: #962639;
+      --on-primary: #f5efe0;
+      --primary-text: #e39aa5;
+      --primary-container: #38181e;
+      --on-primary-container: #f5dce0;
+      --secondary: #8fb39b;
+      --secondary-container: #1f2e24;
+      --tertiary: #c9a35a;
+      --error: #e87a70;
+      --error-container: #3b1916;
+      --on-error: #f5efe0;
+
+      /* Semantic */
+      --positive: #7ec495;
+      --positive-container: #1b2e22;
+      --warning: #e8a848;
+      --warning-container: #362612;
+      --focus: #c9a35a;
+
+      /* Candlelight atmospheric tokens */
+      --candle-amber: #f2b452;
+      --candle-core: #fff3cc;
+      --candle-glow: rgba(232, 168, 72, 0.14);
+      --candle-glow-strong: rgba(232, 168, 72, 0.24);
+      --veil-bg: rgba(28, 23, 20, 0.86);
+      --modal-backdrop: rgba(14, 11, 9, 0.84);
+
+      /* Fonts */
+      --font-headline: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Crimson Pro', Georgia, serif;
+      --font-label: 'Cormorant Garamond', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      /* Shape (Sonnet: square corners, pill tags) */
+      --rounded: 0px;
+      --rounded-lg: 0px;
+      --rounded-full: 9999px;
+
+      /* Style effects */
+      --gilt-rule: 1px solid var(--outline);
+      --gilt-rule-subtle: 1px solid var(--outline-variant);
+      --gilt-frame-inset: 6px;
+
+      /* Type scale (Focused Tool) */
+      --display-size: clamp(1.85rem, 1.35rem + 1.6vw, 2.75rem);
+      --headline-size: clamp(1.35rem, 1.15rem + 0.7vw, 1.75rem);
+      --subhead-size: clamp(1.1rem, 1rem + 0.3vw, 1.25rem);
+      --body-size: clamp(1rem, 0.96rem + 0.15vw, 1.0625rem);
+      --label-size: 0.78rem;
+
+      /* Spacing scale (4pt base) */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.25rem;
+      --space-2xl: 3.5rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.6;
+    }
+    header { position: static !important; }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* Ambient candle radial wash */
+    body {
+      background-image:
+        radial-gradient(ellipse 65% 40% at 15% 6%, var(--candle-glow), transparent 65%),
+        radial-gradient(ellipse 65% 40% at 85% 6%, var(--candle-glow), transparent 65%);
+      min-height: 100vh;
+    }
+
+    .page-grid {
+      display: grid;
+      gap: var(--space-xl);
+      padding: var(--space-lg);
+      max-width: 1220px;
+      margin: 0 auto;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Typography helpers */
+    .label-voice {
+      font-family: var(--font-label);
+      font-weight: 600;
+      font-size: var(--label-size);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .mono-voice {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+    }
+    .verse {
+      font-family: var(--font-headline);
+      font-style: italic;
+      font-size: 1.15rem;
+      line-height: 1.5;
+      color: var(--secondary);
+      border-left: var(--gilt-rule);
+      padding-left: var(--space-md);
+      margin: var(--space-md) auto 0;
+      max-width: 58ch;
+      text-align: left;
+    }
+
+    /* Hero Gilt Double Frame (one per view, honoring Sonnet) */
+    .gilt-frame {
+      position: relative;
+      background: var(--surface-container-low);
+      border: var(--gilt-rule);
+      outline: var(--gilt-rule);
+      outline-offset: calc(-1 * var(--gilt-frame-inset));
+      padding: var(--space-xl) var(--space-lg);
+      text-align: center;
+    }
+
+    .hero-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-lg);
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .hero-title-block {
+      flex: 1;
+      text-align: center;
+    }
+
+    .hero-kicker {
+      color: var(--primary-text);
+      margin-bottom: var(--space-xs);
+    }
+
+    .hero-title {
+      font-family: var(--font-headline);
+      font-weight: 500;
+      font-style: italic;
+      font-size: var(--display-size);
+      line-height: 1.08;
+      letter-spacing: -0.01em;
+      margin: 0;
+      color: var(--on-surface);
+    }
+
+    .hero-subtitle {
+      font-family: var(--font-body);
+      font-size: var(--subhead-size);
+      color: var(--on-surface-variant);
+      margin: var(--space-sm) auto 0;
+      max-width: 56ch;
+    }
+
+    /* Candlelight SVG animation */
+    .candle-fixture {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      width: 54px;
+      position: relative;
+    }
+    .candle-halo {
+      position: absolute;
+      top: -10px;
+      width: 58px;
+      height: 58px;
+      border-radius: var(--rounded-full);
+      background: radial-gradient(circle, var(--candle-glow-strong), transparent 70%);
+      pointer-events: none;
+      animation: halo-flicker 2.4s ease-in-out infinite alternate;
+    }
+    .candle-flame {
+      transform-origin: 24px 26px;
+      animation: flame-dance 1.9s ease-in-out infinite alternate;
+    }
+    .candle-fixture--right .candle-flame {
+      animation-delay: 0.7s;
+      animation-duration: 2.2s;
+    }
+    .candle-fixture--right .candle-halo {
+      animation-delay: 0.5s;
+    }
+
+    @keyframes flame-dance {
+      0% { transform: scaleY(1) scaleX(1) rotate(-2deg); opacity: 0.94; }
+      35% { transform: scaleY(1.08) scaleX(0.94) rotate(2deg); opacity: 1; }
+      70% { transform: scaleY(0.95) scaleX(1.04) rotate(-1deg); opacity: 0.9; }
+      100% { transform: scaleY(1.05) scaleX(0.97) rotate(3deg); opacity: 0.98; }
+    }
+    @keyframes halo-flicker {
+      0% { opacity: 0.65; transform: scale(0.95); }
+      50% { opacity: 1; transform: scale(1.06); }
+      100% { opacity: 0.75; transform: scale(0.98); }
+    }
+
+    /* Telemetry & Timer Strip */
+    .telemetry-strip {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.85fr);
+      gap: var(--space-lg);
+      border-block: var(--gilt-rule);
+      padding-block: var(--space-lg);
+      align-items: center;
+    }
+
+    .timer-panel {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      padding-right: var(--space-lg);
+      border-right: var(--gilt-rule-subtle);
+    }
+
+    .timer-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .timer-display {
+      font-family: var(--font-mono);
+      font-size: clamp(2.1rem, 1.8rem + 1vw, 2.85rem);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.04em;
+      line-height: 1.05;
+      color: var(--on-surface);
+      transition: color var(--dur-short) var(--ease-out);
+    }
+    .timer-display.is-warning { color: var(--warning); }
+    .timer-display.is-critical {
+      color: var(--error);
+      animation: pulse-opacity 1s var(--ease-in-out) infinite alternate;
+    }
+    .timer-display.is-cleared { color: var(--positive); }
+
+    @keyframes pulse-opacity {
+      from { opacity: 1; }
+      to { opacity: 0.58; }
+    }
+
+    .timer-controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      align-items: end;
+    }
+
+    .timer-custom-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .progress-rail {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-md);
+    }
+
+    .seal-node {
+      background: var(--surface-container-low);
+      border: var(--gilt-rule-subtle);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      cursor: pointer;
+      text-align: left;
+      transition: background-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+    }
+    .seal-node:hover {
+      background: var(--surface-container);
+    }
+    .seal-node.is-active {
+      border-color: var(--outline);
+      box-shadow: inset 0 0 0 1px var(--outline);
+    }
+    .seal-node.is-unlocked {
+      border-color: var(--positive);
+    }
+
+    .seal-node-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+    .seal-node-title {
+      font-family: var(--font-headline);
+      font-weight: 600;
+      font-size: 1.15rem;
+      color: var(--on-surface);
+    }
+    .seal-node-meta {
+      font-size: 0.88rem;
+      color: var(--on-surface-variant);
+    }
+
+    /* Tags & Status Pills */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 10px;
+      border-radius: var(--rounded-full);
+      border: 1px solid var(--secondary);
+      color: var(--secondary);
+      font-family: var(--font-label);
+      font-weight: 600;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .tag--positive {
+      border-color: var(--positive);
+      color: var(--positive);
+      background: var(--positive-container);
+    }
+    .tag--warning {
+      border-color: var(--warning);
+      color: var(--warning);
+      background: var(--warning-container);
+    }
+    .tag--locked {
+      border-color: var(--outline-variant);
+      color: var(--on-surface-variant);
+    }
+    .tag--crimson {
+      border-color: var(--primary-text);
+      color: var(--primary-text);
+      background: var(--primary-container);
+    }
+
+    /* Buttons (Sonnet: square corners, burgundy primary, uppercase tracked label) */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      min-height: 44px;
+      padding: 0 var(--space-md);
+      border: 1px solid transparent;
+      border-radius: var(--rounded);
+      font-family: var(--font-label);
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+      white-space: nowrap;
+    }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .btn-sm {
+      min-height: 36px;
+      padding: 0 var(--space-sm);
+      font-size: 0.74rem;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--outline);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--on-surface);
+      border-color: var(--outline);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--surface-container-high);
+    }
+    .btn-crimson-outline {
+      background: transparent;
+      color: var(--primary-text);
+      border-color: var(--primary-text);
+    }
+    .btn-crimson-outline:hover:not(:disabled) {
+      background: var(--primary-container);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--on-surface-variant);
+      border-color: var(--outline-variant);
+    }
+    .btn-ghost:hover:not(:disabled) {
+      color: var(--on-surface);
+      border-color: var(--outline);
+    }
+    .btn.is-active {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--outline);
+    }
+
+    /* Form Controls */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .field-label {
+      font-family: var(--font-label);
+      font-weight: 600;
+      font-size: var(--label-size);
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+    }
+    .input-control, .select-control, .textarea-control {
+      width: 100%;
+      background: var(--surface-container);
+      border: 1px solid var(--outline-variant);
+      border-bottom: 1px solid var(--outline);
+      border-radius: var(--rounded);
+      padding: 0.6rem 0.75rem;
+      color: var(--on-surface);
+      font-size: 0.98rem;
+      transition: border-color var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+    }
+    .input-control { min-height: 44px; }
+    .select-control {
+      min-height: 44px;
+      padding-right: 2rem;
+    }
+    .textarea-control {
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      line-height: 1.5;
+      resize: vertical;
+    }
+    .input-control:focus, .select-control:focus, .textarea-control:focus {
+      background: var(--surface-container-high);
+      border-color: var(--outline);
+    }
+
+    /* Section Headings */
+    .section-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-sm);
+      border-bottom: var(--gilt-rule-subtle);
+      padding-bottom: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .section-title {
+      font-family: var(--font-headline);
+      font-weight: 500;
+      font-style: italic;
+      font-size: var(--headline-size);
+      margin: 0;
+      color: var(--on-surface);
+    }
+    .section-kicker {
+      color: var(--primary-text);
+    }
+
+    /* Incantation Generator (Prompt Terminal) */
+    .terminal-section {
+      background: var(--surface-container-low);
+      border: var(--gilt-rule-subtle);
+      padding: var(--space-lg);
+    }
+    .terminal-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
+    .terminal-inputs {
+      display: grid;
+      gap: var(--space-md);
+    }
+    .input-row-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--space-md);
+    }
+    .vector-choice-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-xs);
+    }
+    .vector-chip {
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--surface-container);
+      border: 1px solid var(--outline-variant);
+      color: var(--on-surface-variant);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      text-align: left;
+      gap: 2px;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+    .vector-chip:hover {
+      background: var(--surface-container-high);
+      color: var(--on-surface);
+    }
+    .vector-chip.is-selected {
+      background: var(--primary-container);
+      border-color: var(--outline);
+      color: var(--on-surface);
+    }
+    .vector-chip-title {
+      font-family: var(--font-label);
+      font-weight: 600;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .vector-chip-sub {
+      font-size: 0.78rem;
+      color: var(--on-surface-variant);
+    }
+
+    .prompt-outputs {
+      display: grid;
+      gap: var(--space-md);
+    }
+    .prompt-scroll-box {
+      background: var(--background);
+      border: var(--gilt-rule-subtle);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    .prompt-scroll-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+      border-bottom: var(--gilt-rule-subtle);
+      padding-bottom: var(--space-xs);
+    }
+    .prompt-code {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.55;
+      color: var(--on-surface);
+      white-space: pre-wrap;
+      margin: 0;
+      max-height: 185px;
+      overflow-y: auto;
+    }
+
+    /* Progression Chambers */
+    .chambers-stack {
+      display: grid;
+      gap: var(--space-xl);
+    }
+
+    .chamber-card {
+      position: relative;
+      background: var(--surface-container-low);
+      border: var(--gilt-rule-subtle);
+      padding: var(--space-lg);
+      transition: border-color var(--dur-short) var(--ease-out);
+    }
+    .chamber-card.is-active {
+      border-color: var(--outline);
+    }
+    .chamber-card.is-unlocked {
+      border-color: var(--positive);
+    }
+
+    .chamber-veil {
+      background: var(--veil-bg);
+      border: var(--gilt-rule-subtle);
+      padding: var(--space-lg);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    /* Stage 1 Checklist */
+    .alchemy-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.95fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
+
+    .checklist-list {
+      display: grid;
+      gap: var(--space-sm);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--surface-container);
+      border: 1px solid var(--outline-variant);
+      cursor: pointer;
+      min-height: 44px;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+    .checklist-item:hover {
+      background: var(--surface-container-high);
+    }
+    .checklist-item.is-checked {
+      border-color: var(--positive);
+      background: var(--positive-container);
+    }
+    .checklist-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+      accent-color: var(--outline);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .cipher-box {
+      background: var(--surface-container);
+      border: var(--gilt-rule);
+      padding: var(--space-lg);
+      display: grid;
+      gap: var(--space-md);
+    }
+
+    .inline-feedback {
+      font-size: 0.92rem;
+      padding: var(--space-xs) var(--space-sm);
+      border-left: 2px solid var(--outline);
+      background: var(--surface-container-high);
+    }
+    .inline-feedback.is-error {
+      border-left-color: var(--error);
+      background: var(--error-container);
+      color: var(--on-error);
+    }
+    .inline-feedback.is-success {
+      border-left-color: var(--positive);
+      background: var(--positive-container);
+      color: var(--positive);
+    }
+
+    /* Stage 2 Mirror of Erised */
+    .mirror-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+      gap: var(--space-lg);
+      align-items: stretch;
+    }
+    .mirror-editor-col, .mirror-preview-col {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    .mirror-frame {
+      flex: 1;
+      min-height: 360px;
+      border: 2px solid var(--outline);
+      outline: var(--gilt-rule-subtle);
+      outline-offset: -5px;
+      background: var(--background);
+      display: flex;
+      flex-direction: column;
+    }
+    .mirror-frame-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-xs) var(--space-md);
+      border-bottom: var(--gilt-rule-subtle);
+      background: var(--surface-container);
+    }
+    .mirror-iframe {
+      width: 100%;
+      flex: 1;
+      min-height: 320px;
+      border: 0;
+      background: var(--background);
+    }
+    .diagnostics-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+
+    /* Stage 3 Room of Requirement */
+    .uplink-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
+    .hosting-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-sm);
+    }
+
+    /* Footer Utility Row */
+    .footer-bar {
+      border-top: var(--gilt-rule-subtle);
+      padding-top: var(--space-lg);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-md);
+      color: var(--on-surface-variant);
+      font-size: 0.9rem;
+    }
+
+    /* Celebration Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: var(--modal-backdrop);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      z-index: 100;
+    }
+    .modal-backdrop.is-open {
+      display: flex;
+    }
+    .modal-scroll {
+      max-width: 640px;
+      width: 100%;
+      background: var(--surface-container-low);
+      border: var(--gilt-rule);
+      outline: var(--gilt-rule);
+      outline-offset: -6px;
+      padding: var(--space-xl);
+      text-align: center;
+      display: grid;
+      gap: var(--space-md);
+      animation: modal-rise var(--dur-long) var(--ease-out);
+    }
+    @keyframes modal-rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .modal-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-sm);
+      border-block: var(--gilt-rule);
+      padding-block: var(--space-md);
+    }
+    .modal-stat-val {
+      font-family: var(--font-headline);
+      font-style: italic;
+      font-size: 1.5rem;
+      color: var(--on-surface);
+    }
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-sm);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .telemetry-strip,
+      .terminal-grid,
+      .alchemy-grid,
+      .mirror-grid,
+      .uplink-grid {
+        grid-template-columns: 1fr;
+      }
+      .timer-panel {
+        border-right: 0;
+        border-bottom: var(--gilt-rule-subtle);
+        padding-right: 0;
+        padding-bottom: var(--space-md);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-grid {
+        padding: var(--space-sm);
+        gap: var(--space-lg);
+      }
+      .candle-fixture {
+        display: none;
+      }
+      .progress-rail,
+      .vector-choice-grid,
+      .hosting-grid,
+      .input-row-2,
+      .modal-stats-row {
+        grid-template-columns: 1fr;
+      }
+      .gilt-frame {
+        padding: var(--space-lg) var(--space-md);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-grid">
+
+    <!-- HERO HEADER WITH CANDLELIGHT & GILT DOUBLE FRAME -->
+    <header class="gilt-frame" aria-label="Chamber Header">
+      <div class="hero-top-row">
+        <div class="candle-fixture" aria-hidden="true">
+          <div class="candle-halo"></div>
+          <svg width="48" height="96" viewBox="0 0 48 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g class="candle-flame">
+              <path d="M24 6C24 6 32 18 32 25C32 29.4 28.4 33 24 33C19.6 33 16 29.4 16 25C16 18 24 6 24 6Z" fill="var(--candle-amber)"/>
+              <path d="M24 14C24 14 28 21 28 25.5C28 28 26.2 30 24 30C21.8 30 20 28 20 25.5C20 21 24 14 24 14Z" fill="var(--candle-core)"/>
+            </g>
+            <line x1="24" y1="32" x2="24" y2="38" stroke="var(--on-surface-variant)" stroke-width="2"/>
+            <path d="M15 39H33V82H15V39Z" fill="var(--surface-container-high)" stroke="var(--outline)" stroke-width="1"/>
+            <path d="M18 39C18 45 21 46 21 52C21 45 24 44 24 39" fill="var(--on-surface-variant)" opacity="0.35"/>
+            <rect x="11" y="82" width="26" height="6" fill="var(--outline)"/>
+            <rect x="8" y="88" width="32" height="5" fill="var(--surface-container)" stroke="var(--outline)" stroke-width="1"/>
+          </svg>
+        </div>
+
+        <div class="hero-title-block">
+          <div class="label-voice hero-kicker">Node 03: The Arcade Architect &middot; Escape Room Accompaniment Terminal</div>
+          <h1 class="hero-title">Chamber of Disengagement: The Dual-Vector Counter-Curse</h1>
+          <p class="hero-subtitle">Engineer an offline Analog Exploit and mirror it into a standalone Digital Twin HTML artifact to shatter the engagement curse.</p>
+          <blockquote class="verse">
+            &ldquo;The legacy networks monitor all digital traffic. To bypass their engagement filters and guarantee student access, we need a contingency plan—a payload that works even when they cut the hardlines.&rdquo;
+          </blockquote>
+        </div>
+
+        <div class="candle-fixture candle-fixture--right" aria-hidden="true">
+          <div class="candle-halo"></div>
+          <svg width="48" height="96" viewBox="0 0 48 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g class="candle-flame">
+              <path d="M24 6C24 6 32 18 32 25C32 29.4 28.4 33 24 33C19.6 33 16 29.4 16 25C16 18 24 6 24 6Z" fill="var(--candle-amber)"/>
+              <path d="M24 14C24 14 28 21 28 25.5C28 28 26.2 30 24 30C21.8 30 20 28 20 25.5C20 21 24 14 24 14Z" fill="var(--candle-core)"/>
+            </g>
+            <line x1="24" y1="32" x2="24" y2="38" stroke="var(--on-surface-variant)" stroke-width="2"/>
+            <path d="M15 39H33V82H15V39Z" fill="var(--surface-container-high)" stroke="var(--outline)" stroke-width="1"/>
+            <path d="M27 39C27 46 30 47 30 53C30 45 32 43 32 39" fill="var(--on-surface-variant)" opacity="0.35"/>
+            <rect x="11" y="82" width="26" height="6" fill="var(--outline)"/>
+            <rect x="8" y="88" width="32" height="5" fill="var(--surface-container)" stroke="var(--outline)" stroke-width="1"/>
+          </svg>
+        </div>
+      </div>
+    </header>
+
+    <!-- TIMER & THREE-STAGE SEAL TRACKER -->
+    <section class="telemetry-strip" aria-label="Hourglass Timer and Chamber Progression">
+      <div class="timer-panel">
+        <div class="timer-header-row">
+          <span class="label-voice">Hourglass Countdown</span>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-sound-toggle" onclick="toggleSound()">
+            <i data-lucide="volume-2" aria-hidden="true"></i>
+            <span id="sound-label">Audio On</span>
+          </button>
+        </div>
+        <div class="timer-display" id="timer-display" aria-live="polite">45:00</div>
+        <div class="timer-controls-row">
+          <button type="button" class="btn btn-primary btn-sm" id="btn-timer-toggle" onclick="toggleTimer()">
+            <i data-lucide="play" aria-hidden="true"></i>
+            <span id="timer-toggle-label">Start Hourglass</span>
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="resetTimer()">
+            <i data-lucide="rotate-ccw" aria-hidden="true"></i>
+            Reset
+          </button>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-preset-45" onclick="setTimerPreset(45)">45m</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-preset-60" onclick="setTimerPreset(60)">60m</button>
+          <div class="timer-custom-group">
+            <label for="input-custom-minutes" class="field-label">Custom Min</label>
+            <div style="display:flex; gap:4px; align-items:center;">
+              <input type="number" id="input-custom-minutes" class="input-control" min="1" max="120" value="45" style="width:74px; min-height:36px; padding:4px 8px;">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="applyCustomTimer()">Set</button>
+            </div>
+          </div>
+        </div>
+        <div id="timer-status-note" class="seal-node-meta">Configure 45:00 or 60:00 workshop sprint; chimes sound at 05:00, 01:00, and 00:00.</div>
+      </div>
+
+      <nav class="progress-rail" aria-label="Chamber Progression Seals">
+        <button type="button" class="seal-node is-active" id="nav-stage-1" onclick="focusChamber('chamber-1')">
+          <div class="seal-node-top">
+            <span class="label-voice">Stage I</span>
+            <span class="tag tag--crimson" id="badge-stage-1">Active</span>
+          </div>
+          <div class="seal-node-title">The Alchemy Chamber</div>
+          <div class="seal-node-meta">Analog Vector &amp; Cipher Lock</div>
+        </button>
+
+        <button type="button" class="seal-node" id="nav-stage-2" onclick="focusChamber('chamber-2')">
+          <div class="seal-node-top">
+            <span class="label-voice">Stage II</span>
+            <span class="tag tag--locked" id="badge-stage-2">Sealed</span>
+          </div>
+          <div class="seal-node-title">The Mirror of Erised</div>
+          <div class="seal-node-meta">Digital Twin HTML Sandbox</div>
+        </button>
+
+        <button type="button" class="seal-node" id="nav-stage-3" onclick="focusChamber('chamber-3')">
+          <div class="seal-node-top">
+            <span class="label-voice">Stage III</span>
+            <span class="tag tag--locked" id="badge-stage-3">Sealed</span>
+          </div>
+          <div class="seal-node-title">The Room of Requirement</div>
+          <div class="seal-node-meta">Deployment Uplink &amp; Lift</div>
+        </button>
+      </nav>
+    </section>
+
+    <!-- INCANTATION GENERATOR / PROMPT TERMINAL -->
+    <section class="terminal-section" aria-labelledby="incantation-heading">
+      <div class="section-header">
+        <div>
+          <div class="label-voice section-kicker">Spellcraft Console</div>
+          <h2 class="section-title" id="incantation-heading">Incantation Generator &amp; Prompt Terminal</h2>
+        </div>
+        <span class="tag">Dual-Vector Protocol</span>
+      </div>
+
+      <div class="terminal-grid">
+        <div class="terminal-inputs">
+          <div class="input-row-2">
+            <div class="field-group">
+              <label for="select-subject" class="field-label">Subject / Discipline</label>
+              <select id="select-subject" class="select-control" onchange="updatePromptTerminal()">
+                <option value="Biology &amp; Ecology (Potions)">Biology &amp; Ecology (Potions)</option>
+                <option value="Mathematics &amp; Algebra (Arithmancy)">Mathematics &amp; Algebra (Arithmancy)</option>
+                <option value="World History &amp; Civics (Muggle Studies)">World History &amp; Civics (Muggle Studies)</option>
+                <option value="ELA &amp; Rhetoric (Charms)">ELA &amp; Rhetoric (Charms)</option>
+                <option value="Physics &amp; Chemistry (Alchemy)">Physics &amp; Chemistry (Alchemy)</option>
+                <option value="Computer Science &amp; Logic (Runes)">Computer Science &amp; Logic (Runes)</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="select-grade" class="field-label">Grade Level</label>
+              <select id="select-grade" class="select-control" onchange="updatePromptTerminal()">
+                <option value="Grades 3–5 (First Years)">Grades 3–5 (First Years)</option>
+                <option value="Grades 6–8 (O.W.L. Prep)" selected>Grades 6–8 (O.W.L. Prep)</option>
+                <option value="Grades 9–12 (N.E.W.T. Level)">Grades 9–12 (N.E.W.T. Level)</option>
+                <option value="Higher Ed / Adult PD (Auror Academy)">Higher Ed / Adult PD (Auror Academy)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="input-row-2">
+            <div class="field-group">
+              <label for="select-injection" class="field-label">Node 03 Injection Method</label>
+              <select id="select-injection" class="select-control" onchange="updatePromptTerminal()">
+                <option value="ATTACH SECURED FILES">Attach Secured Files (PDF / Notes)</option>
+                <option value="INJECT RAW TEXT">Inject Raw Text (Lesson Excerpt)</option>
+                <option value="RUN HEURISTICS ON TOPIC" selected>Run Heuristics on Topic</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="input-topic" class="field-label">Curriculum Payload / Topic</label>
+              <input type="text" id="input-topic" class="input-control" value="Cellular Respiration &amp; ATP Yield" oninput="updatePromptTerminal()">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Analog Vector Mechanism (Syncs with Stage I)</span>
+            <div class="vector-choice-grid" role="group" aria-label="Analog Vector Mechanism">
+              <button type="button" class="vector-chip is-selected" id="vec-card" onclick="selectAnalogVector('card')">
+                <span class="vector-chip-title">Card Duel</span>
+                <span class="vector-chip-sub">Index Card Injection</span>
+              </button>
+              <button type="button" class="vector-chip" id="vec-dice" onclick="selectAnalogVector('dice')">
+                <span class="vector-chip-title">Alchemy Dice</span>
+                <span class="vector-chip-sub">Probability Engine</span>
+              </button>
+              <button type="button" class="vector-chip" id="vec-rune" onclick="selectAnalogVector('rune')">
+                <span class="vector-chip-title">Rune Sorting</span>
+                <span class="vector-chip-sub">Data Correlation</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="prompt-outputs">
+          <div class="prompt-scroll-box">
+            <div class="prompt-scroll-head">
+              <span class="label-voice" style="color: var(--primary-text);">Incantation I &middot; Analog Exploit Blueprint</span>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="copyIncantation('analog', this)">
+                <i data-lucide="copy" aria-hidden="true"></i>
+                <span>Copy Analog Prompt</span>
+              </button>
+            </div>
+            <pre class="prompt-code" id="prompt-analog-output"></pre>
+          </div>
+
+          <div class="prompt-scroll-box">
+            <div class="prompt-scroll-head">
+              <span class="label-voice" style="color: var(--secondary);">Incantation II &middot; Digital Twin Mirroring Protocol</span>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="copyIncantation('digital', this)">
+                <i data-lucide="sparkles" aria-hidden="true"></i>
+                <span>Copy Mirror Prompt</span>
+              </button>
+            </div>
+            <pre class="prompt-code" id="prompt-digital-output"></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THREE PROGRESSION STAGES -->
+    <div class="chambers-stack">
+
+      <!-- STAGE 1: THE ALCHEMY CHAMBER -->
+      <section class="chamber-card is-active" id="chamber-1" aria-labelledby="stage1-heading">
+        <div class="section-header">
+          <div>
+            <div class="label-voice section-kicker">Chamber Stage I &middot; Unplugged Contingency</div>
+            <h2 class="section-title" id="stage1-heading">The Alchemy Chamber: Analog Vector Verification</h2>
+          </div>
+          <span class="tag tag--crimson" id="stage1-status-tag">In Progress</span>
+        </div>
+
+        <div class="alchemy-grid">
+          <div>
+            <p style="margin-top:0;">
+              Before writing a single line of HTML, verify your table&rsquo;s physical, network-independent classroom game for <strong id="stage1-vector-label">Card Duel (Index Card Injection)</strong>. Complete all four alchemy seals below.
+            </p>
+            <ul class="checklist-list" id="stage1-checklist">
+              <li>
+                <label class="checklist-item" id="chk-wrap-0">
+                  <input type="checkbox" id="chk-0" onchange="toggleChecklist(0)">
+                  <span><strong>Curriculum Payload Bound:</strong> Target standard or concept is embedded directly into the game&rsquo;s win condition.</span>
+                </label>
+              </li>
+              <li>
+                <label class="checklist-item" id="chk-wrap-1">
+                  <input type="checkbox" id="chk-1" onchange="toggleChecklist(1)">
+                  <span><strong>Zero-Network Mechanics:</strong> Game plays in 10&ndash;15 minutes using physical cards, dice, or paper tokens with no devices required.</span>
+                </label>
+              </li>
+              <li>
+                <label class="checklist-item" id="chk-wrap-2">
+                  <input type="checkbox" id="chk-2" onchange="toggleChecklist(2)">
+                  <span><strong>Clear Turn &amp; Scoring Loop:</strong> Rules specify setup, player turn order, and tie-breaker / mastery feedback.</span>
+                </label>
+              </li>
+              <li>
+                <label class="checklist-item" id="chk-wrap-3">
+                  <input type="checkbox" id="chk-3" onchange="toggleChecklist(3)">
+                  <span><strong>AI Chat Window Preserved:</strong> Your Analog Blueprint chat thread remains open for Incantation II (the Mirroring Protocol).</span>
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <div class="cipher-box">
+            <div class="label-voice" style="color: var(--tertiary);">Runic Cipher Lock</div>
+            <p style="margin:0; font-size:0.95rem; color: var(--on-surface-variant);">
+              Speak the Node 03 decryption phrase to unseal the Mirror of Erised.
+              <br><em>Riddle:</em> &ldquo;Unplugged by hand, then mirrored in code—name the two-word exploit that opens the road.&rdquo;
+            </p>
+            <div class="field-group">
+              <label for="input-stage1-cipher" class="field-label">Enter Chamber Passphrase</label>
+              <div style="display:flex; gap:var(--space-sm); align-items:end;">
+                <input type="text" id="input-stage1-cipher" class="input-control mono-voice" placeholder="e.g. DUAL-VECTOR" style="text-transform:uppercase;">
+                <button type="button" class="btn btn-primary" id="btn-unlock-stage1" onclick="verifyStage1Lock()">Unseal</button>
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-sm); flex-wrap:wrap;">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="toggleHint('hint-stage1')">
+                <i data-lucide="key-round" aria-hidden="true"></i>
+                Facilitator Clue
+              </button>
+              <span class="seal-node-meta" id="stage1-check-count">0 / 4 Seals Checked</span>
+            </div>
+            <div id="hint-stage1" class="inline-feedback" style="display:none;">
+              Accepted keys: <code>DUAL-VECTOR</code>, <code>ALOHOMORA</code>, or vector seal <code>CARD-03</code> / <code>DICE-03</code> / <code>RUNE-03</code>.
+            </div>
+            <div id="stage1-feedback" class="inline-feedback" style="display:none;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STAGE 2: THE MIRROR OF ERISED -->
+      <section class="chamber-card" id="chamber-2" aria-labelledby="stage2-heading">
+        <div class="section-header">
+          <div>
+            <div class="label-voice section-kicker">Chamber Stage II &middot; Plugged HTML Variant</div>
+            <h2 class="section-title" id="stage2-heading">The Mirror of Erised: Digital Twin Sandbox</h2>
+          </div>
+          <span class="tag tag--locked" id="stage2-status-tag">Sealed</span>
+        </div>
+
+        <div class="chamber-veil" id="stage2-veil">
+          <i data-lucide="lock" aria-hidden="true"></i>
+          <div class="seal-node-title">The Mirror Remains Clouded</div>
+          <p style="margin:0; max-width:48ch; color:var(--on-surface-variant);">
+            Complete the four Analog Readiness Seals and break the Runic Cipher Lock in Stage I to awaken the Digital Twin Sandbox.
+          </p>
+        </div>
+
+        <div id="stage2-workspace" style="display:none;">
+          <p style="margin-top:0;">
+            Paste the standalone HTML generated by <strong>Incantation II</strong> into the injector below. The Mirror validates zero external CDN dependencies and renders your playable game live.
+          </p>
+          <div class="mirror-grid">
+            <div class="mirror-editor-col">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:var(--space-xs);">
+                <label for="textarea-digital-twin" class="field-label">Digital Twin HTML Source</label>
+                <div style="display:flex; gap:var(--space-xs);">
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="loadSampleTwin()">
+                    <i data-lucide="flask-conical" aria-hidden="true"></i>
+                    Load Sample Potions Duel
+                  </button>
+                  <button type="button" class="btn btn-ghost btn-sm" onclick="clearDigitalTwin()">Clear</button>
+                </div>
+              </div>
+              <textarea id="textarea-digital-twin" class="textarea-control" rows="14" oninput="onTwinCodeInput()"></textarea>
+              <div class="diagnostics-list" id="mirror-diagnostics">
+                <span class="tag tag--locked" id="diag-html">HTML Structure</span>
+                <span class="tag tag--locked" id="diag-offline">Zero-CDN Offline Purity</span>
+                <span class="tag tag--locked" id="diag-interactive">Script &amp; Mechanics</span>
+              </div>
+              <div style="display:flex; flex-wrap:wrap; gap:var(--space-sm); margin-top:var(--space-xs);">
+                <button type="button" class="btn btn-secondary" onclick="runMirrorPreview()">
+                  <i data-lucide="eye" aria-hidden="true"></i>
+                  Cast into Mirror
+                </button>
+                <button type="button" class="btn btn-primary" id="btn-unlock-stage2" onclick="verifyStage2Lock()">
+                  <i data-lucide="shield-check" aria-hidden="true"></i>
+                  Seal Mirror &amp; Unlock Stage III
+                </button>
+              </div>
+              <div id="stage2-feedback" class="inline-feedback" style="display:none;"></div>
+            </div>
+
+            <div class="mirror-preview-col">
+              <div class="mirror-frame">
+                <div class="mirror-frame-bar">
+                  <span class="label-voice" style="color:var(--tertiary);">Erised Live Reflection</span>
+                  <span class="mono-voice" style="font-size:0.75rem; color:var(--on-surface-variant);" id="mirror-preview-status">Awaiting HTML Payload</span>
+                </div>
+                <iframe id="mirror-iframe" class="mirror-iframe" title="Digital Twin Live Preview" sandbox="allow-scripts"></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STAGE 3: THE ROOM OF REQUIREMENT -->
+      <section class="chamber-card" id="chamber-3" aria-labelledby="stage3-heading">
+        <div class="section-header">
+          <div>
+            <div class="label-voice section-kicker">Chamber Stage III &middot; Command Proxy Uplink</div>
+            <h2 class="section-title" id="stage3-heading">The Room of Requirement: Dual Deployment Uplink</h2>
+          </div>
+          <span class="tag tag--locked" id="stage3-status-tag">Sealed</span>
+        </div>
+
+        <div class="chamber-veil" id="stage3-veil">
+          <i data-lucide="lock" aria-hidden="true"></i>
+          <div class="seal-node-title">The Door Appears Only to Those Prepared</div>
+          <p style="margin:0; max-width:48ch; color:var(--on-surface-variant);">
+            Verify your standalone HTML Digital Twin in the Mirror of Erised (Stage II) to reveal the Command Proxy Uplink.
+          </p>
+        </div>
+
+        <div id="stage3-workspace" style="display:none;">
+          <div class="uplink-grid">
+            <div style="display:grid; gap:var(--space-md);">
+              <div class="field-group">
+                <span class="field-label">Select Compromised Hosting Array</span>
+                <div class="hosting-grid" role="group" aria-label="Hosting Array">
+                  <button type="button" class="vector-chip is-selected" id="host-google" onclick="selectHostingArray('Google Sites')">
+                    <span class="vector-chip-title">Google Array</span>
+                    <span class="vector-chip-sub">Google Sites</span>
+                  </button>
+                  <button type="button" class="vector-chip" id="host-sharepoint" onclick="selectHostingArray('SharePoint')">
+                    <span class="vector-chip-title">Microsoft Node</span>
+                    <span class="vector-chip-sub">SharePoint</span>
+                  </button>
+                  <button type="button" class="vector-chip" id="host-github" onclick="selectHostingArray('GitHub Pages')">
+                    <span class="vector-chip-title">Open Source Repo</span>
+                    <span class="vector-chip-sub">GitHub Pages</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="input-row-2">
+                <div class="field-group">
+                  <label for="input-house-table" class="field-label">Table / House Designation</label>
+                  <input type="text" id="input-house-table" class="input-control" placeholder="e.g. Table 4 — Ravenclaw" oninput="saveDraftUplink()">
+                </div>
+                <div class="field-group">
+                  <label for="input-uplink-url" class="field-label">Shared Deployment Link</label>
+                  <input type="text" id="input-uplink-url" class="input-control mono-voice" placeholder="sites.google.com/view/table-4-exploit" oninput="saveDraftUplink()">
+                </div>
+              </div>
+
+              <label class="checklist-item" id="chk-bundle-wrap">
+                <input type="checkbox" id="chk-bundle" onchange="toggleBundleConfirm()">
+                <span><strong>Dual-Vector Directory Confirmed:</strong> Our shared directory holds both the printable Analog Blueprint rules and the standalone Digital Twin <code>.html</code> artifact.</span>
+              </label>
+
+              <div>
+                <button type="button" class="btn btn-primary" id="btn-cast-countercurse" onclick="triggerCounterCurse()">
+                  <i data-lucide="wand-sparkles" aria-hidden="true"></i>
+                  Cast Finite Incantatem &mdash; Break the Curse
+                </button>
+              </div>
+              <div id="stage3-feedback" class="inline-feedback" style="display:none;"></div>
+            </div>
+
+            <div class="cipher-box">
+              <div class="label-voice" style="color: var(--tertiary);">Deployment Manifest</div>
+              <p style="margin:0; font-size:0.95rem; color: var(--on-surface-variant);">
+                Confirm your final Dual-Vector package before transmitting to the Command Proxy:
+              </p>
+              <div style="display:grid; gap:var(--space-xs); font-size:0.95rem;">
+                <div><strong>Analog Vector:</strong> <span id="manifest-vector">Card Duel</span></div>
+                <div><strong>Discipline:</strong> <span id="manifest-subject">Biology &amp; Ecology (Potions)</span></div>
+                <div><strong>Digital Twin Status:</strong> <span id="manifest-twin" style="color:var(--warning);">Pending</span></div>
+                <div><strong>Hosting Array:</strong> <span id="manifest-host">Google Sites</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- FOOTER UTILITY BAR -->
+    <footer class="footer-bar">
+      <span>Workshop Terminal adapted from <em>NODE 03: The Arcade Architect</em> &mdash; Dual-Vector Exploit Protocol.</span>
+      <div style="display:flex; gap:var(--space-sm); align-items:center;">
+        <button type="button" class="btn btn-crimson-outline btn-sm" id="btn-reset-workshop" onclick="resetWorkshop(this)">
+          <i data-lucide="rotate-ccw" aria-hidden="true"></i>
+          Reset Workshop Progress
+        </button>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- CURSE BROKEN CELEBRATION MODAL -->
+  <div class="modal-backdrop" id="celebration-modal" role="dialog" aria-modal="true" aria-labelledby="modal-curse-title">
+    <div class="modal-scroll">
+      <div class="label-voice" style="color: var(--positive);">Finite Incantatem &middot; Counter-Curse Executed</div>
+      <h2 class="hero-title" id="modal-curse-title" style="font-size: clamp(1.75rem, 1.3rem + 1.4vw, 2.4rem);">
+        The Curse of Disengagement Is Broken!
+      </h2>
+      <p style="margin:0; color: var(--on-surface-variant);">
+        Command Proxy verification complete. <strong id="modal-house-name" style="color: var(--on-surface);">Your Table</strong> has successfully deployed both an offline Analog Exploit and a zero-CDN Digital Twin.
+      </p>
+
+      <div class="modal-stats-row">
+        <div>
+          <div class="field-label">Time Elapsed</div>
+          <div class="modal-stat-val" id="modal-time-elapsed">00:00</div>
+        </div>
+        <div>
+          <div class="field-label">Analog Vector</div>
+          <div class="modal-stat-val" id="modal-vector-used">Card Duel</div>
+        </div>
+        <div>
+          <div class="field-label">Hosting Array</div>
+          <div class="modal-stat-val" id="modal-host-used">Google Sites</div>
+        </div>
+      </div>
+
+      <div style="font-family:var(--font-mono); font-size:0.82rem; color:var(--secondary); word-break:break-all;" id="modal-uplink-echo"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" onclick="downloadCompletionScroll()">
+          <i data-lucide="scroll-text" aria-hidden="true"></i>
+          Download Victory Scroll (.txt)
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="closeCelebrationModal()">
+          Return to Terminal
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <api-shim></api-shim>
+  <script>
+    // --- Default Application State ---
+    const DEFAULT_STATE = {
+      timerTotalSec: 45 * 60,
+      timerRemainingSec: 45 * 60,
+      timerRunning: false,
+      soundEnabled: true,
+      subject: `Biology & Ecology (Potions)`,
+      grade: `Grades 6–8 (O.W.L. Prep)`,
+      injectionMethod: `RUN HEURISTICS ON TOPIC`,
+      topic: `Cellular Respiration & ATP Yield`,
+      analogVector: `card`,
+      checklist: [false, false, false, false],
+      cipherInput: ``,
+      stage1Unlocked: false,
+      digitalTwinCode: ``,
+      stage2Unlocked: false,
+      hostingArray: `Google Sites`,
+      houseTable: ``,
+      uplinkUrl: ``,
+      bundleConfirmed: false,
+      stage3Unlocked: false,
+      completionTimeStr: ``
+    };
+
+    let appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
+    let timerInterval = null;
+    let audioCtx = null;
+    let warned5Min = false;
+    let warned1Min = false;
+
+    const VECTOR_META = {
+      card: {
+        name: `Card Duel`,
+        nodeName: `INDEX CARD INJECTION (CARD-BASED)`,
+        mechanics: `physical index-card duel deck (30-40 cards with reagent/concept cards, counter-spell challenge cards, and point values)`,
+        cipherTag: `CARD-03`
+      },
+      dice: {
+        name: `Alchemy Dice`,
+        nodeName: `PROBABILITY ENGINE (DICE-BASED)`,
+        mechanics: `dice-driven probability engine (2d6 or 1d20 roll tables mapping outcomes to curriculum prompts, risk-reward rerolls, and potion brewing milestones)`,
+        cipherTag: `DICE-03`
+      },
+      rune: {
+        name: `Rune Sorting`,
+        nodeName: `DATA CORRELATION PROTOCOL (MATCHING)`,
+        mechanics: `tactile rune-sorting & data correlation board (matching Cause/Concept tiles to Effect/Evidence slots under a turn limit)`,
+        cipherTag: `RUNE-03`
+      }
+    };
+
+    const SAMPLE_DIGITAL_TWIN = [
+      `<!DOCTYPE html>`,
+      `<html lang="en">`,
+      `<head>`,
+      `<meta charset="UTF-8">`,
+      `<title>Potions Reagent Card Duel</title>`,
+      `<style>`,
+      `  body { font-family: Georgia, serif; background: #191310; color: #f1e6d2; margin: 0; padding: 20px; }`,
+      `  .board { max-width: 560px; margin: 0 auto; border: 1px solid #c9a35a; padding: 18px; background: #241c17; }`,
+      `  h2 { margin: 0 0 8px; color: #e8b863; font-style: italic; }`,
+      `  .hud { display: flex; justify-content: space-between; font-size: 0.9rem; border-bottom: 1px solid #5a462b; padding-bottom: 8px; margin-bottom: 14px; }`,
+      `  .prompt { font-size: 1.05rem; margin-bottom: 14px; }`,
+      `  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }`,
+      `  button.card { background: #31251e; color: #f1e6d2; border: 1px solid #c9a35a; padding: 12px; cursor: pointer; font-family: inherit; font-size: 0.95rem; text-align: left; }`,
+      `  button.card:hover { background: #6b1424; }`,
+      `  .log { margin-top: 14px; padding: 10px; background: #140f0c; border-left: 3px solid #c9a35a; min-height: 22px; }`,
+      `</style>`,
+      `</head>`,
+      `<body>`,
+      `<div class="board">`,
+      `  <h2>Potions Reagent Card Duel</h2>`,
+      `  <div class="hud"><span class="hud-round">Round 1 / 4</span><span class="hud-score">Mastery: 0</span></div>`,
+      `  <div class="prompt q-prompt"></div>`,
+      `  <div class="cards q-cards"></div>`,
+      `  <div class="log q-log">Draw a reagent card to resolve the reaction.</div>`,
+      `</div>`,
+      `<scr` + `ipt>`,
+      `  var rounds = [`,
+      `    { q: "Which organelle harvests ATP via oxidative phosphorylation?", opts: ["Mitochondrion", "Golgi Apparatus", "Lysosome", "Ribosome"], a: 0 },`,
+      `    { q: "Glycolysis splits one glucose molecule into two molecules of:", opts: ["Acetyl-CoA", "Pyruvate", "Lactate", "Citrate"], a: 1 },`,
+      `    { q: "Which gas acts as the final electron acceptor in aerobic respiration?", opts: ["Nitrogen", "Carbon Dioxide", "Oxygen", "Methane"], a: 2 },`,
+      `    { q: "Approximate net ATP yielded per glucose in full aerobic respiration:", opts: ["2 ATP", "8 ATP", "30-32 ATP", "100 ATP"], a: 2 }`,
+      `  ];`,
+      `  var idx = 0, score = 0;`,
+      `  function render() {`,
+      `    var r = rounds[idx];`,
+      `    document.querySelector(".hud-round").textContent = "Round " + (idx + 1) + " / " + rounds.length;`,
+      `    document.querySelector(".hud-score").textContent = "Mastery: " + score;`,
+      `    document.querySelector(".q-prompt").textContent = r.q;`,
+      `    var box = document.querySelector(".q-cards");`,
+      `    box.innerHTML = "";`,
+      `    r.opts.forEach(function(opt, i) {`,
+      `      var btn = document.createElement("button");`,
+      `      btn.className = "card";`,
+      `      btn.textContent = opt;`,
+      `      btn.onclick = function() { pick(i); };`,
+      `      box.appendChild(btn);`,
+      `    });`,
+      `  }`,
+      `  function pick(i) {`,
+      `    var ok = i === rounds[idx].a;`,
+      `    if (ok) score += 25;`,
+      `    document.querySelector(".q-log").textContent = ok ? "Reaction stabilized! +25 Mastery." : "Cauldron fizzled—review the pathway.";`,
+      `    idx++;`,
+      `    if (idx < rounds.length) { setTimeout(render, 650); }`,
+      `    else {`,
+      `      document.querySelector(".q-prompt").textContent = "Duel Complete! Final Mastery: " + score + " / 100";`,
+      `      var box = document.querySelector(".q-cards");`,
+      `      box.innerHTML = "";`,
+      `      var replay = document.createElement("button");`,
+      `      replay.className = "card";`,
+      `      replay.textContent = "Play Again";`,
+      `      replay.onclick = function() { idx = 0; score = 0; render(); };`,
+      `      box.appendChild(replay);`,
+      `    }`,
+      `  }`,
+      `  render();`,
+      `<` + `/script>`,
+      `</body>`,
+      `</html>`
+    ].join(`\n`);
+
+    // --- Web Audio API Synthesizer (No external files) ---
+    function getAudioCtx() {
+      if (!appState.soundEnabled) return null;
+      if (!audioCtx) {
+        const AudioCtor = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtor) audioCtx = new AudioCtor();
+      }
+      if (audioCtx && audioCtx.state === `suspended`) {
+        audioCtx.resume().catch(() => {});
+      }
+      return audioCtx;
+    }
+
+    function playTone(freq, startOffset, duration, type, volume) {
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      const now = ctx.currentTime + startOffset;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type || `sine`;
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(volume || 0.12, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + duration + 0.03);
+    }
+
+    function playChime(kind) {
+      if (!appState.soundEnabled) return;
+      if (kind === `click`) {
+        playTone(523.25, 0, 0.14, `triangle`, 0.07);
+      } else if (kind === `copy`) {
+        playTone(659.25, 0, 0.18, `sine`, 0.09);
+        playTone(987.77, 0.09, 0.28, `sine`, 0.09);
+      } else if (kind === `unlock`) {
+        [293.66, 369.99, 440.0, 587.33].forEach((f, i) => {
+          playTone(f, i * 0.09, 0.42, `triangle`, 0.11);
+        });
+      } else if (kind === `error`) {
+        playTone(146.83, 0, 0.22, `sawtooth`, 0.07);
+        playTone(130.81, 0.12, 0.28, `sawtooth`, 0.06);
+      } else if (kind === `warning`) {
+        playTone(220.0, 0, 0.85, `sine`, 0.13);
+        playTone(440.0, 0.02, 0.65, `triangle`, 0.05);
+      } else if (kind === `alarm`) {
+        [0, 0.35, 0.7].forEach((t) => {
+          playTone(293.66, t, 0.4, `triangle`, 0.14);
+          playTone(440.0, t + 0.04, 0.35, `sine`, 0.1);
+        });
+      } else if (kind === `victory`) {
+        const notes = [293.66, 369.99, 440.0, 587.33, 739.99, 880.0, 1174.66];
+        notes.forEach((f, i) => {
+          playTone(f, i * 0.08, 0.75, `triangle`, 0.11);
+        });
+      }
+    }
+
+    // --- Persistence Helpers ---
+    async function persistState() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === `function`) {
+          await window.notebookAppApi.setAppState(appState);
+        }
+      } catch (e) {
+        // Ignore host storage errors in standalone preview
+      }
+    }
+
+    async function loadPersistedState() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === `function`) {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && typeof saved === `object`) {
+            appState = Object.assign(JSON.parse(JSON.stringify(DEFAULT_STATE)), saved);
+            appState.timerRunning = false; // always resume paused on reload
+          }
+        }
+      } catch (e) {
+        // Fallback to defaults
+      }
+    }
+
+    // --- Timer Functions ---
+    function formatSeconds(sec) {
+      const s = Math.max(0, Math.floor(sec));
+      const m = Math.floor(s / 60);
+      const r = s % 60;
+      return String(m).padStart(2, `0`) + `:` + String(r).padStart(2, `0`);
+    }
+
+    function renderTimer() {
+      const disp = document.getElementById(`timer-display`);
+      const toggleLabel = document.getElementById(`timer-toggle-label`);
+      const p45 = document.getElementById(`btn-preset-45`);
+      const p60 = document.getElementById(`btn-preset-60`);
+      const note = document.getElementById(`timer-status-note`);
+      if (!disp) return;
+
+      disp.textContent = formatSeconds(appState.timerRemainingSec);
+      disp.classList.remove(`is-warning`, `is-critical`, `is-cleared`);
+      if (appState.stage3Unlocked) {
+        disp.classList.add(`is-cleared`);
+      } else if (appState.timerRemainingSec <= 60) {
+        disp.classList.add(`is-critical`);
+      } else if (appState.timerRemainingSec <= 300) {
+        disp.classList.add(`is-warning`);
+      }
+
+      if (toggleLabel) {
+        if (appState.timerRunning) toggleLabel.textContent = `Pause`;
+        else if (appState.timerRemainingSec < appState.timerTotalSec && appState.timerRemainingSec > 0) toggleLabel.textContent = `Resume`;
+        else toggleLabel.textContent = `Start Hourglass`;
+      }
+
+      if (p45) p45.classList.toggle(`is-active`, appState.timerTotalSec === 45 * 60);
+      if (p60) p60.classList.toggle(`is-active`, appState.timerTotalSec === 60 * 60);
+
+      if (note) {
+        if (appState.timerRemainingSec === 0) {
+          note.textContent = `Time expired! Finish your Dual-Vector deployment to lift the curse.`;
+        } else if (appState.timerRemainingSec <= 60) {
+          note.textContent = `Final minute remaining—prepare your Command Proxy uplink!`;
+        } else if (appState.timerRemainingSec <= 300) {
+          note.textContent = `Under 5 minutes left on the hourglass.`;
+        } else {
+          note.textContent = `Configure 45:00 or 60:00 workshop sprint; chimes sound at 05:00, 01:00, and 00:00.`;
+        }
+      }
+    }
+
+    function tickTimer() {
+      if (!appState.timerRunning) return;
+      if (appState.timerRemainingSec > 0) {
+        appState.timerRemainingSec -= 1;
+        if (appState.timerRemainingSec === 300 && !warned5Min) {
+          warned5Min = true;
+          playChime(`warning`);
+        }
+        if (appState.timerRemainingSec === 60 && !warned1Min) {
+          warned1Min = true;
+          playChime(`warning`);
+        }
+        if (appState.timerRemainingSec === 0) {
+          appState.timerRunning = false;
+          clearInterval(timerInterval);
+          timerInterval = null;
+          playChime(`alarm`);
+        }
+        renderTimer();
+        if (appState.timerRemainingSec % 10 === 0 || appState.timerRemainingSec === 0) {
+          persistState();
+        }
+      }
+    }
+
+    function toggleTimer() {
+      playChime(`click`);
+      if (appState.timerRemainingSec === 0) {
+        appState.timerRemainingSec = appState.timerTotalSec;
+      }
+      appState.timerRunning = !appState.timerRunning;
+      if (appState.timerRunning) {
+        if (!timerInterval) timerInterval = setInterval(tickTimer, 1000);
+      } else {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      renderTimer();
+      persistState();
+    }
+
+    function resetTimer() {
+      playChime(`click`);
+      appState.timerRunning = false;
+      clearInterval(timerInterval);
+      timerInterval = null;
+      appState.timerRemainingSec = appState.timerTotalSec;
+      warned5Min = false;
+      warned1Min = false;
+      renderTimer();
+      persistState();
+    }
+
+    function setTimerPreset(mins) {
+      playChime(`click`);
+      appState.timerRunning = false;
+      clearInterval(timerInterval);
+      timerInterval = null;
+      appState.timerTotalSec = mins * 60;
+      appState.timerRemainingSec = mins * 60;
+      warned5Min = false;
+      warned1Min = false;
+      const customEl = document.getElementById(`input-custom-minutes`);
+      if (customEl) customEl.value = String(mins);
+      renderTimer();
+      persistState();
+    }
+
+    function applyCustomTimer() {
+      const customEl = document.getElementById(`input-custom-minutes`);
+      if (!customEl) return;
+      let mins = parseInt(customEl.value, 10);
+      if (isNaN(mins) || mins < 1) mins = 1;
+      if (mins > 120) mins = 120;
+      customEl.value = String(mins);
+      setTimerPreset(mins);
+    }
+
+    function toggleSound() {
+      appState.soundEnabled = !appState.soundEnabled;
+      const lbl = document.getElementById(`sound-label`);
+      if (lbl) lbl.textContent = appState.soundEnabled ? `Audio On` : `Audio Muted`;
+      if (appState.soundEnabled) playChime(`click`);
+      persistState();
+    }
+
+    // --- Incantation Generator / Prompt Terminal ---
+    function selectAnalogVector(vecKey) {
+      if (!VECTOR_META[vecKey]) return;
+      appState.analogVector = vecKey;
+      playChime(`click`);
+      renderVectorSelection();
+      updatePromptTerminal();
+      persistState();
+    }
+
+    function renderVectorSelection() {
+      [`card`, `dice`, `rune`].forEach((k) => {
+        const el = document.getElementById(`vec-` + k);
+        if (el) el.classList.toggle(`is-selected`, appState.analogVector === k);
+      });
+      const meta = VECTOR_META[appState.analogVector];
+      const lbl = document.getElementById(`stage1-vector-label`);
+      if (lbl && meta) lbl.textContent = meta.name + ` (` + meta.nodeName + `)`;
+      const mv = document.getElementById(`manifest-vector`);
+      if (mv && meta) mv.textContent = meta.name;
+    }
+
+    function updatePromptTerminal() {
+      const subjEl = document.getElementById(`select-subject`);
+      const gradeEl = document.getElementById(`select-grade`);
+      const injEl = document.getElementById(`select-injection`);
+      const topicEl = document.getElementById(`input-topic`);
+
+      if (subjEl) appState.subject = subjEl.value;
+      if (gradeEl) appState.grade = gradeEl.value;
+      if (injEl) appState.injectionMethod = injEl.value;
+      if (topicEl) appState.topic = topicEl.value.trim() || `Core Curriculum Concept`;
+
+      const meta = VECTOR_META[appState.analogVector] || VECTOR_META.card;
+      const analogOut = document.getElementById(`prompt-analog-output`);
+      const digitalOut = document.getElementById(`prompt-digital-output`);
+
+      const injectionLine = appState.injectionMethod === `ATTACH SECURED FILES`
+        ? `Use the curriculum files I am attaching as the sole source of facts and vocabulary.`
+        : appState.injectionMethod === `INJECT RAW TEXT`
+        ? `Use the lesson text I am pasting below as the sole source of facts and vocabulary.`
+        : `Generate accurate curriculum heuristics for the topic below.`;
+
+      const analogPrompt = `[NODE 03 ANALOG EXPLOIT // ${meta.nodeName}]
+Act as an instructional game designer. ${injectionLine}
+- Subject: ${appState.subject}
+- Grade Level: ${appState.grade}
+- Topic Payload: ${appState.topic}
+- Mechanism: Design a completely offline, classroom-ready ${meta.mechanics}.
+
+Output:
+1. Game premise & learning objective (15-minute round).
+2. Printable / physical materials list (zero internet or devices needed).
+3. Step-by-step setup, turn structure, and win/loss conditions.
+4. Exact card, dice-table, or tile content (at least 12 curriculum-aligned items).
+Keep this chat open for the Mirroring Protocol.`;
+
+      const digitalPrompt = `Now, act as an expert educational web developer. Build a digital, single-file HTML version of the game we just designed for ${appState.grade} (${appState.topic}). Output as a standalone HTML file with inline CSS/JS and no external assets (no CDNs). Ensure the mechanics match the offline version as closely as possible.`;
+
+      if (analogOut) analogOut.textContent = analogPrompt;
+      if (digitalOut) digitalOut.textContent = digitalPrompt;
+
+      const ms = document.getElementById(`manifest-subject`);
+      if (ms) ms.textContent = appState.subject;
+      persistState();
+    }
+
+    function copyIncantation(kind, btn) {
+      const targetId = kind === `analog` ? `prompt-analog-output` : `prompt-digital-output`;
+      const el = document.getElementById(targetId);
+      if (!el) return;
+      const text = el.textContent || ``;
+
+      const finishFeedback = () => {
+        playChime(`copy`);
+        const span = btn.querySelector(`span`);
+        if (span) {
+          const orig = span.textContent;
+          span.textContent = `Copied!`;
+          setTimeout(() => { span.textContent = orig; }, 1600);
+        }
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(finishFeedback).catch(() => {
+          fallbackCopy(text);
+          finishFeedback();
+        });
+      } else {
+        fallbackCopy(text);
+        finishFeedback();
+      }
+    }
+
+    function fallbackCopy(text) {
+      const ta = document.createElement(`textarea`);
+      ta.value = text;
+      ta.style.position = `fixed`;
+      ta.style.opacity = `0`;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand(`copy`); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+
+    // --- Stage 1: Alchemy Chamber ---
+    function toggleChecklist(idx) {
+      const chk = document.getElementById(`chk-` + idx);
+      if (!chk) return;
+      appState.checklist[idx] = chk.checked;
+      playChime(`click`);
+      renderChecklist();
+      persistState();
+    }
+
+    function renderChecklist() {
+      let count = 0;
+      for (let i = 0; i < 4; i++) {
+        const chk = document.getElementById(`chk-` + i);
+        const wrap = document.getElementById(`chk-wrap-` + i);
+        const checked = Boolean(appState.checklist[i]);
+        if (checked) count++;
+        if (chk) chk.checked = checked;
+        if (wrap) wrap.classList.toggle(`is-checked`, checked);
+      }
+      const cntEl = document.getElementById(`stage1-check-count`);
+      if (cntEl) cntEl.textContent = count + ` / 4 Seals Checked`;
+    }
+
+    function toggleHint(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      playChime(`click`);
+      el.style.display = el.style.display === `none` ? `block` : `none`;
+    }
+
+    function verifyStage1Lock() {
+      const inputEl = document.getElementById(`input-stage1-cipher`);
+      const fb = document.getElementById(`stage1-feedback`);
+      if (!inputEl || !fb) return;
+
+      const allChecked = appState.checklist.every(Boolean);
+      const raw = inputEl.value.trim().toUpperCase();
+      appState.cipherInput = raw;
+
+      const validCodes = [`DUAL-VECTOR`, `DUAL VECTOR`, `DUALVECTOR`, `ALOHOMORA`, `ALOHOMORA-03`, `CARD-03`, `DICE-03`, `RUNE-03`, `ANALOG-TWIN-03`];
+      fb.style.display = `block`;
+
+      if (!allChecked) {
+        fb.className = `inline-feedback is-error`;
+        fb.textContent = `Check all 4 Analog Readiness Seals on the left before unsealing the lock.`;
+        playChime(`error`);
+        return;
+      }
+
+      if (!validCodes.includes(raw)) {
+        fb.className = `inline-feedback is-error`;
+        fb.textContent = `Access Denied: Invalid cipher. Open "Facilitator Clue" if your table needs the Node 03 key.`;
+        playChime(`error`);
+        return;
+      }
+
+      appState.stage1Unlocked = true;
+      fb.className = `inline-feedback is-success`;
+      fb.textContent = `Analog Seal Broken! The Mirror of Erised (Stage II) is now open.`;
+      playChime(`unlock`);
+      renderStages();
+      persistState();
+    }
+
+    // --- Stage 2: Mirror of Erised ---
+    function loadSampleTwin() {
+      const ta = document.getElementById(`textarea-digital-twin`);
+      if (!ta) return;
+      ta.value = SAMPLE_DIGITAL_TWIN;
+      appState.digitalTwinCode = SAMPLE_DIGITAL_TWIN;
+      playChime(`copy`);
+      evaluateDigitalTwin(SAMPLE_DIGITAL_TWIN);
+      runMirrorPreview();
+      persistState();
+    }
+
+    function clearDigitalTwin() {
+      const ta = document.getElementById(`textarea-digital-twin`);
+      if (!ta) return;
+      ta.value = ``;
+      appState.digitalTwinCode = ``;
+      playChime(`click`);
+      evaluateDigitalTwin(``);
+      const iframe = document.getElementById(`mirror-iframe`);
+      if (iframe) iframe.srcdoc = ``;
+      const status = document.getElementById(`mirror-preview-status`);
+      if (status) status.textContent = `Awaiting HTML Payload`;
+      persistState();
+    }
+
+    function onTwinCodeInput() {
+      const ta = document.getElementById(`textarea-digital-twin`);
+      if (!ta) return;
+      appState.digitalTwinCode = ta.value;
+      evaluateDigitalTwin(ta.value);
+      persistState();
+    }
+
+    function evaluateDigitalTwin(code) {
+      const src = (code || ``).trim();
+      const hasHtml = /<html|<body|<div|<main|<button/i.test(src) && src.length > 80;
+      const hasExternalScriptOrCss = /<(script|link)[^>]+(src|href)\s*=\s*["']\s*(https?:|\/\/)/i.test(src);
+      const zeroCdn = src.length > 0 && !hasExternalScriptOrCss;
+      const hasMechanics = new RegExp(`<scr` + `ipt[\\s>]`, `i`).test(src) && new RegExp(`<style[\\s>]`, `i`).test(src);
+
+      setDiagBadge(`diag-html`, hasHtml, `HTML Structure`);
+      setDiagBadge(`diag-offline`, zeroCdn, zeroCdn ? `Zero-CDN Purity` : `External CDN Found`);
+      setDiagBadge(`diag-interactive`, hasMechanics, `Inline CSS & JS`);
+
+      return { hasHtml, zeroCdn, hasMechanics, passed: hasHtml && zeroCdn && hasMechanics };
+    }
+
+    function setDiagBadge(id, ok, text) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = (ok ? `OK: ` : ``) + text;
+      el.className = ok ? `tag tag--positive` : `tag tag--locked`;
+    }
+
+    function runMirrorPreview() {
+      const ta = document.getElementById(`textarea-digital-twin`);
+      const iframe = document.getElementById(`mirror-iframe`);
+      const status = document.getElementById(`mirror-preview-status`);
+      const fb = document.getElementById(`stage2-feedback`);
+      if (!ta || !iframe) return;
+
+      const code = ta.value.trim();
+      if (!code) {
+        if (fb) {
+          fb.style.display = `block`;
+          fb.className = `inline-feedback is-error`;
+          fb.textContent = `Paste your standalone HTML or click "Load Sample Potions Duel" first.`;
+        }
+        playChime(`error`);
+        return;
+      }
+
+      iframe.srcdoc = code;
+      if (status) status.textContent = `Reflection Active (` + code.length + ` chars)`;
+      if (fb) fb.style.display = `none`;
+      playChime(`click`);
+    }
+
+    function verifyStage2Lock() {
+      const ta = document.getElementById(`textarea-digital-twin`);
+      const fb = document.getElementById(`stage2-feedback`);
+      if (!ta || !fb) return;
+
+      const res = evaluateDigitalTwin(ta.value);
+      fb.style.display = `block`;
+
+      if (!res.hasHtml) {
+        fb.className = `inline-feedback is-error`;
+        fb.textContent = `Mirror Diagnostic Failed: Paste a complete HTML document before sealing Stage II.`;
+        playChime(`error`);
+        return;
+      }
+      if (!res.zeroCdn) {
+        fb.className = `inline-feedback is-error`;
+        fb.textContent = `Offline Purity Violation: Remove external CDN script or stylesheet URLs so the game runs offline.`;
+        playChime(`error`);
+        return;
+      }
+      if (!res.hasMechanics) {
+        fb.className = `inline-feedback is-error`;
+        fb.textContent = `Mechanics Incomplete: Ensure your single-file Digital Twin includes inline style and script logic.`;
+        playChime(`error`);
+        return;
+      }
+
+      runMirrorPreview();
+      appState.stage2Unlocked = true;
+      fb.className = `inline-feedback is-success`;
+      fb.textContent = `Mirror Verified! The Room of Requirement (Stage III) has materialized below.`;
+      playChime(`unlock`);
+      renderStages();
+      persistState();
+    }
+
+    // --- Stage 3: Room of Requirement ---
+    function selectHostingArray(hostName) {
+      appState.hostingArray = hostName;
+      playChime(`click`);
+      renderHostingSelection();
+      persistState();
+    }
+
+    function renderHostingSelection() {
+      const map = {
+        'Google Sites': `host-google`,
+        'SharePoint': `host-sharepoint`,
+        'GitHub Pages': `host-github`
+      };
+      Object.keys(map).forEach((name) => {
+        const el = document.getElementById(map[name]);
+        if (el) el.classList.toggle(`is-selected`, appState.hostingArray === name);
+      });
+      const mh = document.getElementById(`manifest-host`);
+      if (mh) mh.textContent = appState.hostingArray;
+    }
+
+    function saveDraftUplink() {
+      const houseEl = document.getElementById(`input-house-table`);
+      const urlEl = document.getElementById(`input-uplink-url`);
+      if (houseEl) appState.houseTable = houseEl.value;
+      if (urlEl) appState.uplinkUrl = urlEl.value;
+      persistState();
+    }
+
+    function toggleBundleConfirm() {
+      const chk = document.getElementById(`chk-bundle`);
+      const wrap = document.getElementById(`chk-bundle-wrap`);
+      if (!chk) return;
+      appState.bundleConfirmed = chk.checked;
+      if (wrap) wrap.classList.toggle(`is-checked`, chk.checked);
+      playChime(`click`);
+      persistState();
+    }
+
+    function triggerCounterCurse() {
+      const houseEl = document.getElementById(`input-house-table`);
+      const urlEl = document.getElementById(`input-uplink-url`);
+      const fb = document.getElementById(`stage3-feedback`);
+      if (!houseEl || !urlEl || !fb) return;
+
+      const house = houseEl.value.trim();
+      const url = urlEl.value.trim();
+      appState.houseTable = house;
+      appState.uplinkUrl = url;
+
+      fb.style.display = `block`;
+
+      if (house.length < 2) {
+        fb.className = `inline-feedback is-error`;
+        fb.textContent = `Enter your Table or House designation before casting Finite Incantatem.`;
+        playChime(`error`);
+        return;
+      }
+
+      if (url.length < 6 || !url.includes(`.`)) {
+        fb.className = `inline-feedback is-error`;
+        fb.textContent = `Provide a valid shared deployment link (e.g. sites.google.com/view/your-table).`;
+        playChime(`error`);
+        return;
+      }
+
+      if (!appState.bundleConfirmed) {
+        fb.className = `inline-feedback is-error`;
+        fb.textContent = `Confirm the Dual-Vector Directory checkbox to verify both Analog and Digital files are bundled.`;
+        playChime(`error`);
+        return;
+      }
+
+      appState.stage3Unlocked = true;
+      appState.timerRunning = false;
+      clearInterval(timerInterval);
+      timerInterval = null;
+
+      const elapsed = Math.max(0, appState.timerTotalSec - appState.timerRemainingSec);
+      appState.completionTimeStr = formatSeconds(elapsed);
+
+      fb.className = `inline-feedback is-success`;
+      fb.textContent = `Command Proxy Accepted! Counter-Curse lifted in ` + appState.completionTimeStr + `.`;
+
+      renderTimer();
+      renderStages();
+      openCelebrationModal();
+      playChime(`victory`);
+      persistState();
+    }
+
+    // --- Modal & Export ---
+    function openCelebrationModal() {
+      const modal = document.getElementById(`celebration-modal`);
+      if (!modal) return;
+      const meta = VECTOR_META[appState.analogVector] || VECTOR_META.card;
+      const houseEl = document.getElementById(`modal-house-name`);
+      const timeEl = document.getElementById(`modal-time-elapsed`);
+      const vecEl = document.getElementById(`modal-vector-used`);
+      const hostEl = document.getElementById(`modal-host-used`);
+      const urlEl = document.getElementById(`modal-uplink-echo`);
+
+      if (houseEl) houseEl.textContent = appState.houseTable || `Table Operative`;
+      if (timeEl) timeEl.textContent = appState.completionTimeStr || `00:00`;
+      if (vecEl) vecEl.textContent = meta.name;
+      if (hostEl) hostEl.textContent = appState.hostingArray;
+      if (urlEl) urlEl.textContent = `Uplink Verified: ` + appState.uplinkUrl;
+
+      modal.classList.add(`is-open`);
+    }
+
+    function closeCelebrationModal() {
+      const modal = document.getElementById(`celebration-modal`);
+      if (modal) modal.classList.remove(`is-open`);
+      playChime(`click`);
+    }
+
+    function downloadCompletionScroll() {
+      playChime(`copy`);
+      const meta = VECTOR_META[appState.analogVector] || VECTOR_META.card;
+      const content = [
+        `============================================================`,
+        `CHAMBER OF DISENGAGEMENT: DUAL-VECTOR COUNTER-CURSE`,
+        `OFFICIAL COMPLETION SCROLL (NODE 03: THE ARCADE ARCHITECT)`,
+        `============================================================`,
+        `Table / House:   ${appState.houseTable || 'Educator Team'}`,
+        `Discipline:      ${appState.subject} (${appState.grade})`,
+        `Topic Payload:   ${appState.topic}`,
+        `Analog Vector:   ${meta.name} [${meta.nodeName}]`,
+        `Digital Twin:    Standalone Zero-CDN HTML Verified`,
+        `Hosting Array:   ${appState.hostingArray}`,
+        `Deployment URL:  ${appState.uplinkUrl}`,
+        `Elapsed Time:    ${appState.completionTimeStr || 'Cleared'}`,
+        `Status:          CURSE BROKEN // FINITE INCANTATEM`,
+        `============================================================`
+      ].join(`\n`);
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === `function`) {
+        window.notebookAppApi.triggerFileDownload({
+          content: content,
+          contentType: `text/plain`,
+          encoding: `UTF-8`,
+          filename: `counter-curse-completion-scroll.txt`
+        });
+      } else {
+        const blob = new Blob([content], { type: `text/plain` });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement(`a`);
+        a.href = url;
+        a.download = `counter-curse-completion-scroll.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    }
+
+    // --- Stage Rendering & Navigation ---
+    function focusChamber(id) {
+      playChime(`click`);
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: `smooth`, block: `start` });
+    }
+
+    function renderStages() {
+      // Stage 1
+      const c1 = document.getElementById(`chamber-1`);
+      const n1 = document.getElementById(`nav-stage-1`);
+      const b1 = document.getElementById(`badge-stage-1`);
+      const t1 = document.getElementById(`stage1-status-tag`);
+      if (c1) {
+        c1.classList.toggle(`is-unlocked`, appState.stage1Unlocked);
+        c1.classList.toggle(`is-active`, !appState.stage1Unlocked);
+      }
+      if (n1) {
+        n1.classList.toggle(`is-unlocked`, appState.stage1Unlocked);
+        n1.classList.toggle(`is-active`, !appState.stage1Unlocked);
+      }
+      if (b1) {
+        b1.textContent = appState.stage1Unlocked ? `Cleared` : `Active`;
+        b1.className = appState.stage1Unlocked ? `tag tag--positive` : `tag tag--crimson`;
+      }
+      if (t1) {
+        t1.textContent = appState.stage1Unlocked ? `Seal Broken` : `In Progress`;
+        t1.className = appState.stage1Unlocked ? `tag tag--positive` : `tag tag--crimson`;
+      }
+
+      // Stage 2
+      const c2 = document.getElementById(`chamber-2`);
+      const n2 = document.getElementById(`nav-stage-2`);
+      const b2 = document.getElementById(`badge-stage-2`);
+      const t2 = document.getElementById(`stage2-status-tag`);
+      const v2 = document.getElementById(`stage2-veil`);
+      const w2 = document.getElementById(`stage2-workspace`);
+      const mt = document.getElementById(`manifest-twin`);
+
+      if (v2) v2.style.display = appState.stage1Unlocked ? `none` : `flex`;
+      if (w2) w2.style.display = appState.stage1Unlocked ? `block` : `none`;
+
+      if (c2) {
+        c2.classList.toggle(`is-unlocked`, appState.stage2Unlocked);
+        c2.classList.toggle(`is-active`, appState.stage1Unlocked && !appState.stage2Unlocked);
+      }
+      if (n2) {
+        n2.classList.toggle(`is-unlocked`, appState.stage2Unlocked);
+        n2.classList.toggle(`is-active`, appState.stage1Unlocked && !appState.stage2Unlocked);
+      }
+      if (b2) {
+        b2.textContent = appState.stage2Unlocked ? `Cleared` : (appState.stage1Unlocked ? `Active` : `Sealed`);
+        b2.className = appState.stage2Unlocked ? `tag tag--positive` : (appState.stage1Unlocked ? `tag tag--crimson` : `tag tag--locked`);
+      }
+      if (t2) {
+        t2.textContent = appState.stage2Unlocked ? `Seal Broken` : (appState.stage1Unlocked ? `In Progress` : `Sealed`);
+        t2.className = appState.stage2Unlocked ? `tag tag--positive` : (appState.stage1Unlocked ? `tag tag--crimson` : `tag tag--locked`);
+      }
+      if (mt) {
+        mt.textContent = appState.stage2Unlocked ? `Verified Offline HTML` : `Pending`;
+        mt.style.color = appState.stage2Unlocked ? `var(--positive)` : `var(--warning)`;
+      }
+
+      // Stage 3
+      const c3 = document.getElementById(`chamber-3`);
+      const n3 = document.getElementById(`nav-stage-3`);
+      const b3 = document.getElementById(`badge-stage-3`);
+      const t3 = document.getElementById(`stage3-status-tag`);
+      const v3 = document.getElementById(`stage3-veil`);
+      const w3 = document.getElementById(`stage3-workspace`);
+
+      if (v3) v3.style.display = appState.stage2Unlocked ? `none` : `flex`;
+      if (w3) w3.style.display = appState.stage2Unlocked ? `block` : `none`;
+
+      if (c3) {
+        c3.classList.toggle(`is-unlocked`, appState.stage3Unlocked);
+        c3.classList.toggle(`is-active`, appState.stage2Unlocked && !appState.stage3Unlocked);
+      }
+      if (n3) {
+        n3.classList.toggle(`is-unlocked`, appState.stage3Unlocked);
+        n3.classList.toggle(`is-active`, appState.stage2Unlocked && !appState.stage3Unlocked);
+      }
+      if (b3) {
+        b3.textContent = appState.stage3Unlocked ? `Lifted` : (appState.stage2Unlocked ? `Active` : `Sealed`);
+        b3.className = appState.stage3Unlocked ? `tag tag--positive` : (appState.stage2Unlocked ? `tag tag--crimson` : `tag tag--locked`);
+      }
+      if (t3) {
+        t3.textContent = appState.stage3Unlocked ? `Curse Broken` : (appState.stage2Unlocked ? `In Progress` : `Sealed`);
+        t3.className = appState.stage3Unlocked ? `tag tag--positive` : (appState.stage2Unlocked ? `tag tag--crimson` : `tag tag--locked`);
+      }
+    }
+
+    function resetWorkshop(btn) {
+      if (btn && btn.dataset.armed !== `true`) {
+        btn.dataset.armed = `true`;
+        btn.textContent = `Click Again to Confirm Reset`;
+        setTimeout(() => {
+          if (btn.dataset.armed === `true`) {
+            btn.dataset.armed = `false`;
+            btn.textContent = `Reset Workshop Progress`;
+          }
+        }, 3500);
+        return;
+      }
+      if (btn) {
+        btn.dataset.armed = `false`;
+        btn.textContent = `Reset Workshop Progress`;
+      }
+      clearInterval(timerInterval);
+      timerInterval = null;
+      appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
+      warned5Min = false;
+      warned1Min = false;
+      playChime(`click`);
+      hydrateDOMFromState();
+      const iframe = document.getElementById(`mirror-iframe`);
+      if (iframe) iframe.srcdoc = ``;
+      [`stage1-feedback`, `stage2-feedback`, `stage3-feedback`].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = `none`;
+      });
+      persistState();
+    }
+
+    function hydrateDOMFromState() {
+      const subjEl = document.getElementById(`select-subject`);
+      const gradeEl = document.getElementById(`select-grade`);
+      const injEl = document.getElementById(`select-injection`);
+      const topicEl = document.getElementById(`input-topic`);
+      const cipherEl = document.getElementById(`input-stage1-cipher`);
+      const twinEl = document.getElementById(`textarea-digital-twin`);
+      const houseEl = document.getElementById(`input-house-table`);
+      const urlEl = document.getElementById(`input-uplink-url`);
+      const bundleEl = document.getElementById(`chk-bundle`);
+      const bundleWrap = document.getElementById(`chk-bundle-wrap`);
+      const soundLbl = document.getElementById(`sound-label`);
+      const customMin = document.getElementById(`input-custom-minutes`);
+
+      if (subjEl) subjEl.value = appState.subject;
+      if (gradeEl) gradeEl.value = appState.grade;
+      if (injEl) injEl.value = appState.injectionMethod;
+      if (topicEl) topicEl.value = appState.topic;
+      if (cipherEl) cipherEl.value = appState.cipherInput;
+      if (twinEl) twinEl.value = appState.digitalTwinCode;
+      if (houseEl) houseEl.value = appState.houseTable;
+      if (urlEl) urlEl.value = appState.uplinkUrl;
+      if (bundleEl) bundleEl.checked = Boolean(appState.bundleConfirmed);
+      if (bundleWrap) bundleWrap.classList.toggle(`is-checked`, Boolean(appState.bundleConfirmed));
+      if (soundLbl) soundLbl.textContent = appState.soundEnabled ? `Audio On` : `Audio Muted`;
+      if (customMin) customMin.value = String(Math.round(appState.timerTotalSec / 60));
+
+      renderTimer();
+      renderVectorSelection();
+      updatePromptTerminal();
+      renderChecklist();
+      evaluateDigitalTwin(appState.digitalTwinCode);
+      if (appState.digitalTwinCode) {
+        const iframe = document.getElementById(`mirror-iframe`);
+        const status = document.getElementById(`mirror-preview-status`);
+        if (iframe) iframe.srcdoc = appState.digitalTwinCode;
+        if (status) status.textContent = `Reflection Restored (` + appState.digitalTwinCode.length + ` chars)`;
+      }
+      renderHostingSelection();
+      renderStages();
+    }
+
+    async function initApp() {
+      await loadPersistedState();
+      hydrateDOMFromState();
+      if (window.lucide && typeof window.lucide.createIcons === `function`) {
+        window.lucide.createIcons();
+      }
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === `function`) {
+        window.notebookAppApi.notifyAppReady();
+      }
+    }
+
+    document.addEventListener(`DOMContentLoaded`, initApp);
+  </script>
+</body>
+</html>
