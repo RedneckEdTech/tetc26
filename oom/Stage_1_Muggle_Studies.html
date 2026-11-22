@@ -1,0 +1,2156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="tool">
+  <meta name="design-style" content="sonnet">
+  <title>Stage 1: Muggle Studies — Order of Merlin Terminal</title>
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Page and surfaces (Sonnet parchment palette) */
+      --background: #f5efe0;
+      --surface-container-low: #f8f3e7;
+      --surface-container: #ece3cf;
+      --surface-container-high: #e4d8bf;
+
+      /* Ink */
+      --on-surface: #1f1a17;
+      --on-surface-variant: #4a3f38;
+
+      /* Rules */
+      --outline: #a8843f;
+      --outline-variant: #d8c7a3;
+
+      /* Accents */
+      --primary: #6b1424;
+      --on-primary: #f5efe0;
+      --primary-container: #efe0dc;
+      --on-primary-container: #4a0d18;
+      --secondary: #2f4a3a;
+      --on-secondary: #f5efe0;
+      --secondary-container: #e2eae4;
+      --tertiary: #a8843f;
+      --error: #9b2c1f;
+      --on-error: #f5efe0;
+      --error-container: #f5e1de;
+
+      /* Semantic */
+      --positive: #2f4a3a;
+      --warning: #7a4b10;
+      --warning-container: #f3e6cc;
+      --focus: #6b1424;
+
+      /* House Accents (WCAG AA on parchment) */
+      --house-gryffindor: #740001;
+      --house-gryffindor-bg: #f3e2df;
+      --house-ravenclaw: #0e2a47;
+      --house-ravenclaw-bg: #e1e7ef;
+      --house-hufflepuff: #6b4e00;
+      --house-hufflepuff-bg: #f2ead1;
+      --house-slytherin: #1a472a;
+      --house-slytherin-bg: #e0eae3;
+
+      /* Data series */
+      --data-1: #6b1424;
+      --data-2: #2f4a3a;
+      --data-3: #a8843f;
+      --data-4: #3d5a73;
+      --data-context: #b9ad9c;
+
+      /* Offline-safe classic serif & monospace typography */
+      --font-headline: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, 'Times New Roman', serif;
+      --font-body: Georgia, 'Palatino Linotype', 'Book Antiqua', Cambria, 'Times New Roman', serif;
+      --font-label: 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+      --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+
+      /* Shape */
+      --rounded: 0;
+      --rounded-lg: 0;
+      --rounded-full: 9999px;
+
+      /* Style effects */
+      --gilt-rule: 1px solid var(--outline);
+      --hairline-rule: 1px solid var(--outline-variant);
+      --gilt-frame-inset: 5px;
+      --paper-vignette: inset 0 0 80px rgb(120 90 40 / 0.14);
+
+      /* Type scale (Focused Tool) */
+      --display-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.35rem);
+      --headline-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+      --subhead-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+      --body-size: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);
+      --label-size: 0.75rem;
+
+      /* Spacing scale (4pt base) */
+      --space-2xs: 0.125rem;
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { overflow-x: clip; margin: 0; padding: 0; }
+    header { position: static !important; }
+
+    body {
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.6;
+      box-shadow: var(--paper-vignette);
+      min-height: 100vh;
+    }
+
+    .page-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-lg);
+      padding: var(--space-lg);
+      max-width: 1220px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Focus rings */
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* Centered Ministry Masthead */
+    .masthead {
+      text-align: center;
+      border-top: var(--gilt-rule);
+      border-bottom: var(--gilt-rule);
+      padding: var(--space-lg) var(--space-md);
+      background-color: var(--surface-container-low);
+    }
+
+    .kicker {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin: 0 0 var(--space-xs) 0;
+    }
+
+    .masthead h1 {
+      font-family: var(--font-headline);
+      font-size: var(--display-size);
+      font-weight: 500;
+      font-style: italic;
+      line-height: 1.15;
+      letter-spacing: -0.005em;
+      margin: 0 0 var(--space-xs) 0;
+      color: var(--on-surface);
+    }
+
+    .masthead-sub {
+      font-family: var(--font-body);
+      font-size: var(--subhead-size);
+      color: var(--on-surface-variant);
+      margin: 0 auto;
+      max-width: 62ch;
+    }
+
+    .masthead-meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: var(--space-sm) var(--space-md);
+      margin-top: var(--space-md);
+      padding-top: var(--space-sm);
+      border-top: var(--hairline-rule);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+    }
+
+    .tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      border: 1px solid var(--secondary);
+      color: var(--secondary);
+      border-radius: var(--rounded-full);
+      padding: var(--space-2xs) var(--space-sm);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background-color: transparent;
+    }
+
+    .tag-pill.locked-badge {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .tag-pill.unlocked-badge {
+      border-color: var(--secondary);
+      background-color: var(--secondary-container);
+      color: var(--secondary);
+    }
+
+    /* Top Control Strip: House Selector + Run Clock */
+    .control-strip {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: var(--space-lg);
+      align-items: stretch;
+    }
+
+    .panel {
+      background-color: var(--surface-container-low);
+      border: var(--gilt-rule);
+      padding: var(--space-lg);
+    }
+
+    .panel-parchment {
+      background-color: var(--surface-container);
+      border: var(--gilt-rule);
+      padding: var(--space-lg);
+    }
+
+    .section-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-sm);
+      border-bottom: var(--hairline-rule);
+      padding-bottom: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+
+    .section-head h2 {
+      font-family: var(--font-headline);
+      font-size: var(--headline-size);
+      font-weight: 600;
+      font-style: italic;
+      margin: 0;
+      color: var(--on-surface);
+    }
+
+    .section-kicker {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+
+    /* House Buttons Grid */
+    .house-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-sm);
+    }
+
+    .house-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-md);
+      background-color: var(--background);
+      border: var(--hairline-rule);
+      color: var(--on-surface);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-align: left;
+      transition: background-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+    }
+
+    .house-btn:hover {
+      background-color: var(--surface-container);
+    }
+
+    .house-btn.active {
+      box-shadow: inset 3px 0 0 var(--primary);
+      background-color: var(--primary-container);
+      color: var(--on-primary-container);
+      border-color: var(--primary);
+    }
+
+    .house-btn[data-house="gryffindor"].active {
+      box-shadow: inset 3px 0 0 var(--house-gryffindor);
+      background-color: var(--house-gryffindor-bg);
+      color: var(--house-gryffindor);
+      border-color: var(--house-gryffindor);
+    }
+    .house-btn[data-house="ravenclaw"].active {
+      box-shadow: inset 3px 0 0 var(--house-ravenclaw);
+      background-color: var(--house-ravenclaw-bg);
+      color: var(--house-ravenclaw);
+      border-color: var(--house-ravenclaw);
+    }
+    .house-btn[data-house="hufflepuff"].active {
+      box-shadow: inset 3px 0 0 var(--house-hufflepuff);
+      background-color: var(--house-hufflepuff-bg);
+      color: var(--house-hufflepuff);
+      border-color: var(--house-hufflepuff);
+    }
+    .house-btn[data-house="slytherin"].active {
+      box-shadow: inset 3px 0 0 var(--house-slytherin);
+      background-color: var(--house-slytherin-bg);
+      color: var(--house-slytherin);
+      border-color: var(--house-slytherin);
+    }
+
+    .house-crest {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .verse-bar {
+      margin-top: var(--space-md);
+      font-family: var(--font-headline);
+      font-style: italic;
+      font-size: var(--subhead-size);
+      line-height: 1.45;
+      color: var(--secondary);
+      border-left: var(--gilt-rule);
+      padding-left: var(--space-md);
+    }
+
+    .hatstall-row {
+      margin-top: var(--space-md);
+      padding-top: var(--space-sm);
+      border-top: var(--hairline-rule);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+    }
+
+    .check-label {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      cursor: pointer;
+      font-size: var(--body-size);
+      color: var(--on-surface);
+      min-height: 44px;
+    }
+
+    .check-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* Run Clock */
+    .clock-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+
+    .clock-readout {
+      font-family: var(--font-headline);
+      font-size: clamp(2.4rem, 1.8rem + 2vw, 3.2rem);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums lining-nums;
+      line-height: 1;
+      color: var(--on-surface);
+      letter-spacing: 0.02em;
+    }
+
+    .clock-readout.phase-hint {
+      color: var(--warning);
+    }
+
+    .clock-readout.phase-felix {
+      color: var(--primary);
+    }
+
+    .clock-readout.phase-gate {
+      color: var(--error);
+    }
+
+    .clock-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      align-items: center;
+    }
+
+    .pacing-track-wrap {
+      margin-top: var(--space-md);
+      padding-top: var(--space-sm);
+      border-top: var(--hairline-rule);
+    }
+
+    .pacing-bar-outer {
+      position: relative;
+      height: 12px;
+      background-color: var(--surface-container-high);
+      border: var(--hairline-rule);
+      overflow: hidden;
+      margin-bottom: var(--space-xs);
+    }
+
+    .pacing-bar-fill {
+      height: 100%;
+      width: 100%;
+      background-color: var(--secondary);
+      transform-origin: left center;
+      transition: transform var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
+    }
+
+    .pacing-bar-fill.phase-hint { background-color: var(--warning); }
+    .pacing-bar-fill.phase-felix { background-color: var(--primary); }
+    .pacing-bar-fill.phase-gate { background-color: var(--error); }
+
+    .pacing-markers {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-xs);
+      font-family: var(--font-mono);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+    }
+
+    .pacing-marker-item {
+      display: inline-flex;
+      flex-direction: column;
+      gap: var(--space-2xs);
+    }
+
+    .pacing-marker-item.active-cue {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .pacing-alert-banner {
+      margin-top: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      border-left: 3px solid var(--secondary);
+      background-color: var(--background);
+      font-size: var(--body-size);
+      color: var(--on-surface);
+    }
+
+    .pacing-alert-banner.cue-hint {
+      border-left-color: var(--warning);
+      background-color: var(--warning-container);
+    }
+
+    .pacing-alert-banner.cue-felix {
+      border-left-color: var(--primary);
+      background-color: var(--primary-container);
+    }
+
+    .pacing-alert-banner.cue-gate {
+      border-left-color: var(--error);
+      background-color: var(--error-container);
+    }
+
+    .pacing-jump-row {
+      margin-top: var(--space-sm);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .mini-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--rounded);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+    }
+
+    .btn-sm {
+      min-height: 36px;
+      padding: var(--space-xs) var(--space-sm);
+      letter-spacing: 0.08em;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+    }
+    .btn-primary:hover {
+      background-color: var(--on-primary-container);
+      border-color: var(--on-primary-container);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+    .btn-secondary:hover {
+      background-color: var(--primary-container);
+    }
+
+    .btn-subtle {
+      background-color: var(--background);
+      color: var(--on-surface);
+      border-color: var(--outline);
+    }
+    .btn-subtle:hover {
+      background-color: var(--surface-container);
+    }
+
+    .btn-subtle.active-preset {
+      background-color: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Main Workspace Grid */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.95fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+
+    .stack-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-lg);
+    }
+
+    /* Form Controls */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-md);
+      align-items: end;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .field-group.full-span {
+      grid-column: 1 / -1;
+    }
+
+    .field-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--on-surface);
+    }
+
+    .field-input,
+    .field-select,
+    .field-textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-md);
+      background-color: var(--background);
+      border: 1px solid var(--outline);
+      border-radius: var(--rounded);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      transition: background-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+    }
+
+    .field-select {
+      padding-right: var(--space-xl);
+    }
+
+    .field-textarea {
+      min-height: 76px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .field-input:focus,
+    .field-select:focus,
+    .field-textarea:focus {
+      border-color: var(--primary);
+      background-color: var(--surface-container-low);
+      box-shadow: inset 0 -2px 0 var(--primary);
+      outline: none;
+    }
+
+    /* Game Mechanic Vector Cards */
+    .vector-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-sm);
+    }
+
+    .vector-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-2xs);
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-md);
+      background-color: var(--background);
+      border: var(--hairline-rule);
+      color: var(--on-surface);
+      text-align: left;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+    }
+
+    .vector-btn:hover {
+      background-color: var(--surface-container);
+    }
+
+    .vector-btn.active {
+      background-color: var(--primary-container);
+      border-color: var(--primary);
+      box-shadow: inset 3px 0 0 var(--primary);
+    }
+
+    .vector-title {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+
+    .vector-desc {
+      font-size: var(--body-size);
+      color: var(--on-surface-variant);
+      line-height: 1.35;
+    }
+
+    /* Presets Row */
+    .preset-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-xs);
+      margin-top: var(--space-md);
+    }
+
+    /* Prompt Output Box */
+    .incantation-box {
+      margin-top: var(--space-md);
+      background-color: var(--background);
+      border: var(--gilt-rule);
+      padding: var(--space-md);
+    }
+
+    .incantation-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+      padding-bottom: var(--space-sm);
+      margin-bottom: var(--space-sm);
+      border-bottom: var(--hairline-rule);
+    }
+
+    .incantation-text {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      line-height: 1.55;
+      color: var(--on-surface);
+      white-space: pre-wrap;
+      margin: 0;
+      max-height: 310px;
+      overflow-y: auto;
+      padding-right: var(--space-xs);
+    }
+
+    .incantation-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
+      padding-top: var(--space-sm);
+      border-top: var(--hairline-rule);
+    }
+
+    .status-msg {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--secondary);
+      min-height: 1.2em;
+    }
+
+    .status-msg.error-text {
+      color: var(--error);
+    }
+
+    .offline-note {
+      margin-top: var(--space-md);
+      padding: var(--space-sm) var(--space-md);
+      border-left: 2px solid var(--secondary);
+      background-color: var(--surface-container);
+      font-size: var(--body-size);
+      color: var(--on-surface-variant);
+      max-width: 65ch;
+    }
+
+    /* Sorting Envelope Checklist */
+    .props-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-xs);
+    }
+
+    .props-item {
+      border-bottom: var(--hairline-rule);
+      padding: var(--space-xs) 0;
+    }
+
+    .props-item:last-child {
+      border-bottom: none;
+    }
+
+    /* Chamber Lock Panel */
+    .riddle-list {
+      margin: var(--space-sm) 0 var(--space-md) 0;
+      padding-left: var(--space-lg);
+      color: var(--on-surface);
+      display: grid;
+      gap: var(--space-xs);
+    }
+
+    .lock-form-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--space-sm);
+      align-items: end;
+    }
+
+    /* Gilt Double Frame — Used once on the Unlocked Certificate */
+    .gilt-frame {
+      border: var(--gilt-rule);
+      outline: var(--gilt-rule);
+      outline-offset: calc(-1 * var(--gilt-frame-inset));
+      padding: var(--space-lg);
+      background-color: var(--surface-container-low);
+      text-align: center;
+    }
+
+    .ribbon-seal {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto var(--space-sm) auto;
+      display: block;
+    }
+
+    .cert-title {
+      font-family: var(--font-headline);
+      font-size: var(--headline-size);
+      font-weight: 600;
+      font-style: italic;
+      color: var(--primary);
+      margin: var(--space-xs) 0;
+    }
+
+    .cert-body {
+      max-width: 52ch;
+      margin: 0 auto var(--space-md) auto;
+      color: var(--on-surface);
+    }
+
+    .cert-fields {
+      text-align: left;
+      display: grid;
+      gap: var(--space-md);
+      margin-top: var(--space-md);
+      padding-top: var(--space-md);
+      border-top: var(--hairline-rule);
+    }
+
+    .score-ledger {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: var(--space-sm);
+      font-size: var(--body-size);
+    }
+
+    .score-ledger th,
+    .score-ledger td {
+      padding: var(--space-xs) var(--space-sm);
+      border-bottom: var(--hairline-rule);
+      text-align: left;
+    }
+
+    .score-ledger th {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+    }
+
+    .score-ledger td.num-col,
+    .score-ledger th.num-col {
+      text-align: right;
+      font-variant-numeric: tabular-nums lining-nums;
+    }
+
+    .score-ledger tr.total-row td {
+      border-top: var(--gilt-rule);
+      border-bottom: var(--gilt-rule);
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Hint Drawer */
+    .drawer-toggle {
+      width: 100%;
+      justify-content: space-between;
+      text-align: left;
+    }
+
+    .drawer-body {
+      margin-top: var(--space-md);
+      display: grid;
+      gap: var(--space-sm);
+    }
+
+    .clue-card {
+      background-color: var(--background);
+      border: var(--hairline-rule);
+      border-left: 3px solid var(--outline);
+      padding: var(--space-sm) var(--space-md);
+    }
+
+    .clue-card.clue-unlocked {
+      border-left-color: var(--secondary);
+    }
+
+    .clue-card summary {
+      cursor: pointer;
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--primary);
+      padding: var(--space-xs) 0;
+      list-style: none;
+    }
+
+    .clue-card p {
+      margin: var(--space-xs) 0 0 0;
+      font-size: var(--body-size);
+      color: var(--on-surface);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Container query example for card adaptation */
+    .card-wrapper {
+      container-type: inline-size;
+    }
+
+    @container (max-width: 420px) {
+      .form-grid,
+      .vector-grid,
+      .house-grid {
+        grid-template-columns: 1fr;
+      }
+      .lock-form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Footer */
+    .ledger-footer {
+      border-top: var(--gilt-rule);
+      padding: var(--space-md) 0;
+      text-align: center;
+      font-size: var(--label-size);
+      font-family: var(--font-label);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+    }
+
+    /* Responsive layout shifts */
+    @media (max-width: 900px) {
+      .control-strip,
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-grid {
+        padding: var(--space-md) var(--space-sm);
+        gap: var(--space-md);
+      }
+      .panel,
+      .panel-parchment {
+        padding: var(--space-md);
+      }
+      .form-grid,
+      .vector-grid,
+      .house-grid {
+        grid-template-columns: 1fr;
+      }
+      .lock-form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    @media print {
+      body {
+        box-shadow: none;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-grid">
+    <!-- Ministry of Magic Masthead -->
+    <header class="masthead">
+      <p class="kicker">Ministry of Magic · Department of Magical Education · Merlin Trials</p>
+      <h1>Stage 1: Muggle Studies — Third Class Chamber</h1>
+      <p class="masthead-sub">
+        Craft a 100% unplugged physical classroom game using your table’s Sorting Envelope props, then unseal the Stage 1 Vault to claim the White Ribbon for Contributions to Knowledge.
+      </p>
+      <div class="masthead-meta">
+        <span id="masthead-house-readout">Table House: Unassigned</span>
+        <span aria-hidden="true">·</span>
+        <span id="masthead-lock-badge" class="tag-pill locked-badge">Vault Sealed · White Ribbon Pending</span>
+        <span aria-hidden="true">·</span>
+        <span>Zero-CDN Offline Terminal</span>
+      </div>
+    </header>
+
+    <!-- Top Strip: House Table Selector + Chamber Run Clock -->
+    <section class="control-strip no-print" aria-label="House assignment and Stage 1 pacing timer">
+      <!-- House Selector Card -->
+      <div class="panel card-wrapper">
+        <div class="section-head">
+          <h2>Table Sorting &amp; House Banner</h2>
+          <span class="section-kicker">Step 1 · Claim Table</span>
+        </div>
+        <div class="house-grid" role="group" aria-label="Select your Hogwarts House">
+          <button type="button" class="house-btn active" data-house="gryffindor" onclick="selectHouse('gryffindor')">
+            <svg class="house-crest" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M12 2L4 6v6c0 5 3.4 9.2 8 10 4.6-.8 8-5 8-10V6l-8-4z"/>
+              <path d="M9 14l3-6 3 6M10 12h4"/>
+            </svg>
+            <span>Gryffindor</span>
+          </button>
+          <button type="button" class="house-btn" data-house="ravenclaw" onclick="selectHouse('ravenclaw')">
+            <svg class="house-crest" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M12 2L4 6v6c0 5 3.4 9.2 8 10 4.6-.8 8-5 8-10V6l-8-4z"/>
+              <path d="M8 14c1.5-3 3-5 4-6 1 1 2.5 3 4 6l-4-1.5L8 14z"/>
+            </svg>
+            <span>Ravenclaw</span>
+          </button>
+          <button type="button" class="house-btn" data-house="hufflepuff" onclick="selectHouse('hufflepuff')">
+            <svg class="house-crest" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M12 2L4 6v6c0 5 3.4 9.2 8 10 4.6-.8 8-5 8-10V6l-8-4z"/>
+              <circle cx="12" cy="11" r="3"/>
+              <path d="M8 16c1.2-1 2.5-1.5 4-1.5s2.8.5 4 1.5"/>
+            </svg>
+            <span>Hufflepuff</span>
+          </button>
+          <button type="button" class="house-btn" data-house="slytherin" onclick="selectHouse('slytherin')">
+            <svg class="house-crest" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M12 2L4 6v6c0 5 3.4 9.2 8 10 4.6-.8 8-5 8-10V6l-8-4z"/>
+              <path d="M9 9c0 2 6 2 6 4s-6 2-6 4"/>
+            </svg>
+            <span>Slytherin</span>
+          </button>
+        </div>
+
+        <blockquote id="house-motto" class="verse-bar">
+          “Where dwell the brave at heart.” — Gryffindor House Table (6 Wizards Max)
+        </blockquote>
+
+        <div class="hatstall-row">
+          <label class="check-label">
+            <input type="checkbox" id="chk-hatstall" onchange="toggleHatstall(this.checked)">
+            <span>Sorting Hat “Hatstall” Loyalty Bonus (+5 pts)</span>
+          </label>
+          <span class="mini-label" id="house-seat-note">Pre-Game Sorting Active</span>
+        </div>
+      </div>
+
+      <!-- Chamber Run Clock -->
+      <div class="panel">
+        <div class="section-head">
+          <h2>Chamber Run Clock</h2>
+          <span class="section-kicker" id="clock-mode-label">10-Minute Trial</span>
+        </div>
+
+        <div class="clock-header">
+          <div id="clock-display" class="clock-readout" aria-live="polite">10:00</div>
+          <div class="clock-controls">
+            <button type="button" id="btn-clock-toggle" class="btn btn-primary btn-sm" onclick="toggleTimer()">Start Clock</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="resetTimer()">Reset</button>
+            <button type="button" id="btn-dur-10" class="btn btn-subtle btn-sm active-preset" onclick="setDurationPreset(600)">10m</button>
+            <button type="button" id="btn-dur-20" class="btn btn-subtle btn-sm" onclick="setDurationPreset(1200)">20m (85m PD)</button>
+          </div>
+        </div>
+
+        <div class="pacing-track-wrap">
+          <div class="pacing-bar-outer" role="progressbar" aria-label="Stage 1 remaining time progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="pacing-progressbar">
+            <div id="pacing-bar-fill" class="pacing-bar-fill"></div>
+          </div>
+          <div class="pacing-markers">
+            <span class="pacing-marker-item" id="marker-start">Start · 10:00</span>
+            <span class="pacing-marker-item" id="marker-hint">05:00 · Room Hint</span>
+            <span class="pacing-marker-item" id="marker-felix">03:00 · Felix Felicis</span>
+            <span class="pacing-marker-item" id="marker-gate">01:00 · Soft Gate</span>
+          </div>
+        </div>
+
+        <div id="pacing-alert" class="pacing-alert-banner">
+          <strong>Pacing Status:</strong> Chamber open. Design your physical game framework and copy your Gemini incantation before the 5-minute checkpoint.
+        </div>
+
+        <div class="pacing-jump-row">
+          <span class="mini-label">Facilitator Cue Preview:</span>
+          <button type="button" class="btn btn-subtle btn-sm" onclick="jumpToMarker(300)">05:00 Hint</button>
+          <button type="button" class="btn btn-subtle btn-sm" onclick="jumpToMarker(180)">03:00 Felix</button>
+          <button type="button" class="btn btn-subtle btn-sm" onclick="jumpToMarker(60)">01:00 Gate</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Two-Column Tool Workspace -->
+    <section class="workspace-grid" aria-label="Incantation generator and Stage 1 chamber verification">
+      <!-- Left Column: Incantation Generator -->
+      <div class="panel card-wrapper no-print">
+        <div class="section-head">
+          <h2>Incantation Generator</h2>
+          <span class="section-kicker">Step 2 · Muggle Studies Blueprint</span>
+        </div>
+
+        <p style="margin-top: 0; color: var(--on-surface-variant);">
+          Select your classroom parameters below to conjure a targeted prompt for Google Gemini (or your chosen AI terminal). Stage 1 builds an <strong>unplugged physical game</strong> using only dice, index cards, and sticky notes.
+        </p>
+
+        <div class="form-grid">
+          <div class="field-group">
+            <label class="field-label" for="sel-grade">Grade Band</label>
+            <select id="sel-grade" class="field-select" onchange="updateGenerator()">
+              <option value="K–2 Early Elementary (Ages 5–8)">K–2 Early Elementary (Ages 5–8)</option>
+              <option value="3–5 Upper Elementary (Ages 8–11)" selected>3–5 Upper Elementary (Ages 8–11)</option>
+              <option value="6–8 Middle School (Ages 11–14)">6–8 Middle School (Ages 11–14)</option>
+              <option value="9–12 High School (Ages 14–18)">9–12 High School (Ages 14–18)</option>
+              <option value="Adult Learners / Higher Ed / Staff PD">Adult Learners / Higher Ed / Staff PD</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="sel-subject">Content Subject</label>
+            <select id="sel-subject" class="field-select" onchange="updateGenerator()">
+              <option value="Mathematics" selected>Mathematics</option>
+              <option value="English Language Arts">English Language Arts</option>
+              <option value="Science &amp; Inquiry">Science &amp; Inquiry</option>
+              <option value="Social Studies &amp; History">Social Studies &amp; History</option>
+              <option value="World Languages">World Languages</option>
+              <option value="Arts, Music &amp; Design">Arts, Music &amp; Design</option>
+              <option value="Special Education / Intervention">Special Education / Intervention</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="inp-topic">Lesson Topic or Standard</label>
+            <input type="text" id="inp-topic" class="field-input" value="Equivalent fractions &amp; comparing denominators" oninput="updateGenerator()">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="sel-ai">AI Terminal Target</label>
+            <select id="sel-ai" class="field-select" onchange="updateGenerator()">
+              <option value="Google Gemini" selected>Google Gemini (Canvas Preview Ready)</option>
+              <option value="Microsoft Copilot">Microsoft Copilot</option>
+              <option value="Anthropic Claude">Anthropic Claude</option>
+              <option value="OpenAI ChatGPT">OpenAI ChatGPT</option>
+            </select>
+          </div>
+
+          <div class="field-group full-span">
+            <span class="field-label">Game Mechanic Vector (Sorting Envelope Props)</span>
+            <div class="vector-grid" role="radiogroup" aria-label="Select game mechanic vector">
+              <button type="button" class="vector-btn active" data-vector="dice" onclick="selectVector('dice')">
+                <span class="vector-title">Dice Rolling (2d6)</span>
+                <span class="vector-desc">Roll 2 six-sided dice to trigger challenges, modifiers, or risk-reward turns.</span>
+              </button>
+              <button type="button" class="vector-btn" data-vector="cards" onclick="selectVector('cards')">
+                <span class="vector-title">Card Matching (Index Cards)</span>
+                <span class="vector-desc">Draw, pair, bluff, or trade hand-written concept &amp; evidence cards.</span>
+              </button>
+              <button type="button" class="vector-btn" data-vector="path" onclick="selectVector('path')">
+                <span class="vector-title">Path &amp; Movement (Sticky Notes)</span>
+                <span class="vector-desc">Build a tabletop track of sticky-note spaces with checkpoints &amp; detours.</span>
+              </button>
+              <button type="button" class="vector-btn" data-vector="sequence" onclick="selectVector('sequence')">
+                <span class="vector-title">Sorting &amp; Sequencing</span>
+                <span class="vector-desc">Race or collaborate to rank timelines, proofs, or cause-effect chains.</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="preset-row">
+          <span class="mini-label">Quick Presets:</span>
+          <button type="button" class="btn btn-subtle btn-sm" onclick="applyPreset('fractions')">Gr 4 Fractions · Dice</button>
+          <button type="button" class="btn btn-subtle btn-sm" onclick="applyPreset('ecosystems')">Gr 7 Ecosystems · Cards</button>
+          <button type="button" class="btn btn-subtle btn-sm" onclick="applyPreset('industrial')">HS History · Path</button>
+        </div>
+
+        <div class="incantation-box">
+          <div class="incantation-header">
+            <span class="section-kicker" id="prompt-target-badge">Incantation Prepared for Google Gemini</span>
+            <span class="mini-label" id="prompt-stats">0 words</span>
+          </div>
+          <pre id="incantation-output" class="incantation-text"></pre>
+          <div class="incantation-actions">
+            <span id="copy-status" class="status-msg" aria-live="polite"></span>
+            <button type="button" class="btn btn-primary" onclick="copyIncantation()">Copy Incantation</button>
+          </div>
+        </div>
+
+        <div class="offline-note">
+          <strong>Muggle Studies Craft &amp; Stage 2 Preview:</strong> Stage 1 creates an offline game that survives any Wi-Fi outage. In Stage 2 (<em>Transfiguration</em>), you will paste a follow-up incantation into Google Gemini with <strong>Canvas</strong> enabled to preview an interactive zero-CDN HTML version in real time before downloading it locally.
+        </div>
+      </div>
+
+      <!-- Right Column: Sorting Envelope + Chamber Lock / Certificate + Hint Drawer -->
+      <div class="stack-col">
+        <!-- Sorting Envelope Table Kit Checklist -->
+        <div class="panel no-print">
+          <div class="section-head">
+            <h2>The Sorting Envelope</h2>
+            <span class="section-kicker" id="kit-progress">0 / 4 Ready</span>
+          </div>
+          <ul class="props-list">
+            <li class="props-item">
+              <label class="check-label">
+                <input type="checkbox" class="kit-chk" data-prop="dice" onchange="toggleKitProp('dice', this.checked)">
+                <span>2 six-sided dice (Dice Rolling vector)</span>
+              </label>
+            </li>
+            <li class="props-item">
+              <label class="check-label">
+                <input type="checkbox" class="kit-chk" data-prop="cards" onchange="toggleKitProp('cards', this.checked)">
+                <span>Deck of blank index cards (Card Matching)</span>
+              </label>
+            </li>
+            <li class="props-item">
+              <label class="check-label">
+                <input type="checkbox" class="kit-chk" data-prop="notes" onchange="toggleKitProp('notes', this.checked)">
+                <span>Sticky notes (Tabletop path &amp; tokens)</span>
+              </label>
+            </li>
+            <li class="props-item">
+              <label class="check-label">
+                <input type="checkbox" class="kit-chk" data-prop="map" onchange="toggleKitProp('map', this.checked)">
+                <span>Marauder’s Map checklist &amp; House Spirit (+5 pts)</span>
+              </label>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Stage 1 Chamber Verification Lock (Shown while Locked) -->
+        <section id="chamber-lock-panel" class="panel-parchment" aria-label="Stage 1 Chamber Verification Lock">
+          <div class="section-head">
+            <h2>Chamber Verification Lock</h2>
+            <span class="section-kicker">Step 3 · Unseal Vault</span>
+          </div>
+          <p style="margin-top: 0;">
+            Once your House has generated and sketched its unplugged game framework, decipher the three-part <strong>Muggle Studies Vault Code</strong> from your briefing and Table Kit:
+          </p>
+          <ol class="riddle-list">
+            <li><strong>First digit:</strong> The Order of Merlin <em>Class number</em> for Stage 1 (Third Class).</li>
+            <li><strong>Second digit:</strong> How many <em>six-sided dice</em> are inside your Sorting Envelope.</li>
+            <li><strong>Final word:</strong> The <em>color</em> of the Stage 1 Merit Ribbon (e.g., <code>32-COLOR</code>).</li>
+          </ol>
+
+          <div class="lock-form-row">
+            <div class="field-group">
+              <label class="field-label" for="inp-lock-code">Chamber Passcode</label>
+              <input type="text" id="inp-lock-code" class="field-input" placeholder="e.g. 32-WHITE" onkeydown="handleLockKey(event)">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="verifyChamberCode()">Unseal Stage 1</button>
+          </div>
+          <p id="lock-feedback" class="status-msg" style="margin: var(--space-sm) 0 0 0;" aria-live="polite"></p>
+        </section>
+
+        <!-- Unlocked White Ribbon Certificate & Keeper's Bonus Trial #1 -->
+        <section id="certificate-panel" class="gilt-frame hidden" aria-label="White Ribbon Achievement Certificate">
+          <svg class="ribbon-seal" viewBox="0 0 72 72" fill="none" aria-hidden="true">
+            <path d="M26 42L20 66l16-8 16 8-6-24" stroke="var(--outline)" stroke-width="2" fill="var(--background)"/>
+            <circle cx="36" cy="28" r="20" fill="var(--surface-container-low)" stroke="var(--outline)" stroke-width="2"/>
+            <circle cx="36" cy="28" r="15" stroke="var(--primary)" stroke-width="1.2" stroke-dasharray="3 2"/>
+            <path d="M36 17l3 7h7l-5.5 4.2 2 6.8-6.5-4.3-6.5 4.3 2-6.8L26 24h7l3-7z" fill="var(--primary)"/>
+          </svg>
+
+          <p class="kicker">Order of Merlin · Third Class · White Ribbon</p>
+          <h2 class="cert-title">Awarded for Contributions to Knowledge</h2>
+          <p class="cert-body" id="cert-citation">
+            This certifies that <strong id="cert-house-name">House Gryffindor</strong> has mastered the Stage 1 Muggle Studies Trial, forged an unplugged classroom game, and unlocked the path to Stage 2 Transfiguration.
+          </p>
+
+          <div class="cert-fields">
+            <div class="field-group no-print">
+              <label class="field-label" for="inp-educator-names">Table Educators / Wizard Names</label>
+              <input type="text" id="inp-educator-names" class="field-input" placeholder="Enter table members' names" oninput="updateCertDetails()">
+            </div>
+
+            <div class="field-group no-print">
+              <label class="field-label" for="sel-speed-rank">Stage 1 Finish Placement (Speed Bonus)</label>
+              <select id="sel-speed-rank" class="field-select" onchange="updateCertDetails()">
+                <option value="0">Completed Within Timer (Standard)</option>
+                <option value="10">1st Place Table (+10 pts Speed Bonus)</option>
+                <option value="5">2nd Place Table (+5 pts Speed Bonus)</option>
+                <option value="3">3rd Place Table (+3 pts Speed Bonus)</option>
+              </select>
+            </div>
+
+            <!-- Keeper's Bonus Trial #1 -->
+            <div style="background-color: var(--background); border: var(--hairline-rule); padding: var(--space-md);">
+              <p class="kicker" style="margin-bottom: var(--space-xs);">Early Finisher Side Quest · Keeper’s Bonus Trial #1 (+15 pts)</p>
+              <p style="margin: 0 0 var(--space-sm) 0; font-size: var(--body-size);">
+                Record 2 concrete ways to adapt your Stage 1 unplugged game mechanic for your own students before the timer ends:
+              </p>
+              <div class="field-group" style="margin-bottom: var(--space-sm);">
+                <label class="field-label" for="txt-adapt-1">Classroom Adaptation #1</label>
+                <textarea id="txt-adapt-1" class="field-textarea" placeholder="e.g., Differentiate index card tiers by reading readiness..." oninput="updateCertDetails()"></textarea>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="txt-adapt-2">Classroom Adaptation #2</label>
+                <textarea id="txt-adapt-2" class="field-textarea" placeholder="e.g., Add a 2-minute peer check token using sticky notes..." oninput="updateCertDetails()"></textarea>
+              </div>
+            </div>
+
+            <!-- Live House Points Ledger for Stage 1 -->
+            <table class="score-ledger" aria-label="Stage 1 House Point Tally">
+              <thead>
+                <tr>
+                  <th>Stage 1 Ledger Category</th>
+                  <th class="num-col">Points</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Stage 1 Completion (White Ribbon)</td>
+                  <td class="num-col">+25</td>
+                </tr>
+                <tr>
+                  <td>Sorting Hat / House Readiness</td>
+                  <td class="num-col" id="score-bonus-prep">+0</td>
+                </tr>
+                <tr>
+                  <td>Stage 1 Speed Bonus</td>
+                  <td class="num-col" id="score-speed">+0</td>
+                </tr>
+                <tr>
+                  <td>Keeper’s Bonus Trial #1 (Both Reflections)</td>
+                  <td class="num-col" id="score-keeper">+0</td>
+                </tr>
+                <tr>
+                  <td>Felix Felicis Hint Card Adjustment</td>
+                  <td class="num-col" id="score-felix">0</td>
+                </tr>
+                <tr class="total-row">
+                  <td>Projected Stage 1 House Total</td>
+                  <td class="num-col" id="score-total">25</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="hatstall-row no-print">
+              <label class="check-label">
+                <input type="checkbox" id="chk-felix-used" onchange="toggleFelixAdjustment(this.checked)">
+                <span>Used Physical Felix Felicis Rescue Card (-5 pts optional)</span>
+              </label>
+            </div>
+
+            <div class="incantation-actions no-print">
+              <button type="button" class="btn btn-primary btn-sm" onclick="downloadFieldRecord()">Export Field Record</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="printCertificate()">Print Certificate</button>
+              <button type="button" class="btn btn-subtle btn-sm" id="btn-relock" onclick="relockChamber(this)">Relock Vault</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Integrated Clue & Hint Drawer -->
+        <section class="panel no-print" aria-label="Keeper's Hint and Clue Drawer">
+          <button type="button" class="btn btn-subtle drawer-toggle" id="btn-hint-drawer" aria-expanded="false" onclick="toggleHintDrawer()">
+            <span>Keeper’s Hint &amp; Clue Drawer</span>
+            <span id="hint-drawer-state" class="mini-label">Closed · 3 Clues</span>
+          </button>
+
+          <div id="hint-drawer-body" class="drawer-body hidden">
+            <details class="clue-card" id="clue-tier-1">
+              <summary>05:00 Mark · Professor’s General Hint</summary>
+              <p>
+                Keep Stage 1 completely unplugged: focus on 2–4 clear rules using only your 2 dice, blank index cards, and sticky notes. For the Chamber Passcode, look at the three items in the riddle: <strong>Third</strong> Class = 3, number of <strong>dice</strong> = 2, and the Stage 1 <strong>Ribbon color</strong>.
+              </p>
+            </details>
+
+            <details class="clue-card" id="clue-tier-2">
+              <summary>03:00 Mark · Felix Felicis (“Liquid Luck”) Nudge</summary>
+              <p>
+                Stuck on the prompt or lock? Pick one concrete skill (not an entire unit) in the Topic box, copy the Incantation into Gemini, and ask each wizard at your table to write 3 sample index cards. The Chamber Passcode starts with <strong>32-W…</strong>
+              </p>
+            </details>
+
+            <details class="clue-card" id="clue-tier-3">
+              <summary>01:00 Mark · Soft Stage Gate Rescue Key</summary>
+              <p>
+                Every House graduates Stage 1 before the 0:20 debrief! Enter <strong style="font-family: var(--font-mono);">32-WHITE</strong> (or <strong style="font-family: var(--font-mono);">MUGGLE</strong>) into the Chamber Passcode box above to unseal your White Ribbon and begin Keeper’s Bonus Trial #1.
+              </p>
+            </details>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <footer class="ledger-footer">
+      Order of Merlin PD · Stage 1: Muggle Studies (Third Class) · Standalone Zero-CDN Offline Edition
+    </footer>
+  </main>
+
+  <api-shim></api-shim>
+  <script>
+    const HOUSE_DATA = {
+      gryffindor: {
+        name: `Gryffindor`,
+        motto: `“Where dwell the brave at heart.” — Gryffindor House Table (6 Wizards Max)`
+      },
+      ravenclaw: {
+        name: `Ravenclaw`,
+        motto: `“Wit beyond measure is man’s greatest treasure.” — Ravenclaw House Table (6 Wizards Max)`
+      },
+      hufflepuff: {
+        name: `Hufflepuff`,
+        motto: `“Those patient Hufflepuffs are true and unafraid of toil.” — Hufflepuff House Table (6 Wizards Max)`
+      },
+      slytherin: {
+        name: `Slytherin`,
+        motto: `“Those cunning folk use any means to achieve their ends.” — Slytherin House Table (6 Wizards Max)`
+      }
+    };
+
+    const VECTOR_DATA = {
+      dice: {
+        label: `Dice Rolling (2 six-sided dice)`,
+        props: `2 six-sided dice, blank index cards for challenge prompts, and sticky notes for score/health tracking`,
+        mechanicInstruction: `Build the core turn loop around rolling 2 six-sided dice (2d6): map specific sums or doubles to curriculum challenges, bonus multipliers, or peer-verification twists.`
+      },
+      cards: {
+        label: `Card Matching & Trading (Index Cards)`,
+        props: `a deck of blank index cards cut or labeled into concept pairs/sets, plus sticky notes for wildcards`,
+        mechanicInstruction: `Design a tactile card-matching, set-collection, or bluff-and-justify mechanic using 16–24 student-ready index cards where players must verbally defend each match.`
+      },
+      path: {
+        label: `Path & Movement (Sticky-Note Tabletop Board)`,
+        props: `sticky notes arranged as a winding tabletop track, 2 six-sided dice for movement, and index cards for event tiles`,
+        mechanicInstruction: `Create a modular tabletop path game made of 12–16 sticky-note spaces with checkpoint gates, shortcut branches, and hazard tiles tied directly to curriculum misconceptions.`
+      },
+      sequence: {
+        label: `Sorting & Sequencing (Chronology / Process Chain)`,
+        props: `blank index cards for step/event tiles, sticky notes for category headers, and 2 six-sided dice as a tie-breaker or draw modifier`,
+        mechanicInstruction: `Structure a collaborative or competitive sequencing duel where teams arrange index-card clues into the correct chronological, causal, or procedural order and justify their reasoning.`
+      }
+    };
+
+    const VALID_CODES = new Set([
+      `32-WHITE`,
+      `32WHITE`,
+      `32W`,
+      `32-W`,
+      `MUGGLE`,
+      `MUGGLESTUDIES`,
+      `WHITE`,
+      `WHITERIBBON`,
+      `THIRDCLASS`
+    ]);
+
+    let appState = {
+      house: `gryffindor`,
+      hatstall: false,
+      grade: `3–5 Upper Elementary (Ages 8–11)`,
+      subject: `Mathematics`,
+      topic: `Equivalent fractions & comparing denominators`,
+      aiTarget: `Google Gemini`,
+      vector: `dice`,
+      kitProps: {
+        dice: false,
+        cards: false,
+        notes: false,
+        map: false
+      },
+      durationTotal: 600,
+      secondsRemaining: 600,
+      timerRunning: false,
+      unlocked: false,
+      educatorNames: ``,
+      speedRank: `0`,
+      adapt1: ``,
+      adapt2: ``,
+      felixUsed: false,
+      drawerOpen: false
+    };
+
+    let timerIntervalId = null;
+
+    function formatTime(totalSecs) {
+      const clamped = Math.max(0, Math.floor(totalSecs));
+      const mins = Math.floor(clamped / 60);
+      const secs = clamped % 60;
+      const mm = mins < 10 ? `0${mins}` : `${mins}`;
+      const ss = secs < 10 ? `0${secs}` : `${secs}`;
+      return `${mm}:${ss}`;
+    }
+
+    async function persistState() {
+      if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === `function`) {
+        try {
+          await window.notebookAppApi.setAppState(appState);
+        } catch (err) {
+          /* Ignore transient host serialization errors */
+        }
+      }
+    }
+
+    function selectHouse(houseKey) {
+      if (!HOUSE_DATA[houseKey]) return;
+      appState.house = houseKey;
+      renderHouse();
+      renderScoreLedger();
+      persistState();
+    }
+
+    function renderHouse() {
+      const info = HOUSE_DATA[appState.house] || HOUSE_DATA.gryffindor;
+      const btns = document.querySelectorAll(`.house-btn`);
+      btns.forEach(function (btn) {
+        if (btn.dataset.house === appState.house) {
+          btn.classList.add(`active`);
+        } else {
+          btn.classList.remove(`active`);
+        }
+      });
+
+      const mottoEl = document.getElementById(`house-motto`);
+      if (mottoEl) mottoEl.textContent = info.motto;
+
+      const mastHouse = document.getElementById(`masthead-house-readout`);
+      if (mastHouse) mastHouse.textContent = `Table House: ${info.name}`;
+
+      const certHouse = document.getElementById(`cert-house-name`);
+      if (certHouse) certHouse.textContent = `House ${info.name}`;
+
+      const hatChk = document.getElementById(`chk-hatstall`);
+      if (hatChk) hatChk.checked = Boolean(appState.hatstall);
+
+      const seatNote = document.getElementById(`house-seat-note`);
+      if (seatNote) {
+        seatNote.textContent = appState.hatstall ? `+5 Hatstall Loyalty Active` : `Pre-Game Sorting Active`;
+      }
+    }
+
+    function toggleHatstall(checked) {
+      appState.hatstall = Boolean(checked);
+      renderHouse();
+      renderScoreLedger();
+      persistState();
+    }
+
+    function setDurationPreset(seconds) {
+      pauseTimerInterval();
+      appState.timerRunning = false;
+      appState.durationTotal = seconds;
+      appState.secondsRemaining = seconds;
+      renderTimer();
+      persistState();
+    }
+
+    function toggleTimer() {
+      if (appState.timerRunning) {
+        pauseTimerInterval();
+        appState.timerRunning = false;
+      } else {
+        if (appState.secondsRemaining <= 0) {
+          appState.secondsRemaining = appState.durationTotal;
+        }
+        appState.timerRunning = true;
+        startTimerInterval();
+      }
+      renderTimer();
+      persistState();
+    }
+
+    function resetTimer() {
+      pauseTimerInterval();
+      appState.timerRunning = false;
+      appState.secondsRemaining = appState.durationTotal;
+      renderTimer();
+      persistState();
+    }
+
+    function jumpToMarker(seconds) {
+      if (seconds > appState.durationTotal) {
+        appState.durationTotal = 600;
+      }
+      appState.secondsRemaining = seconds;
+      renderTimer();
+      persistState();
+    }
+
+    function startTimerInterval() {
+      pauseTimerInterval();
+      timerIntervalId = window.setInterval(function () {
+        if (appState.secondsRemaining > 0) {
+          appState.secondsRemaining -= 1;
+          renderTimer();
+          if (appState.secondsRemaining % 15 === 0 || appState.secondsRemaining === 300 || appState.secondsRemaining === 180 || appState.secondsRemaining === 60 || appState.secondsRemaining === 0) {
+            persistState();
+          }
+        } else {
+          pauseTimerInterval();
+          appState.timerRunning = false;
+          renderTimer();
+          persistState();
+        }
+      }, 1000);
+    }
+
+    function pauseTimerInterval() {
+      if (timerIntervalId !== null) {
+        window.clearInterval(timerIntervalId);
+        timerIntervalId = null;
+      }
+    }
+
+    function renderTimer() {
+      const display = document.getElementById(`clock-display`);
+      const toggleBtn = document.getElementById(`btn-clock-toggle`);
+      const barFill = document.getElementById(`pacing-bar-fill`);
+      const progressBar = document.getElementById(`pacing-progressbar`);
+      const alertBox = document.getElementById(`pacing-alert`);
+      const modeLabel = document.getElementById(`clock-mode-label`);
+      const btn10 = document.getElementById(`btn-dur-10`);
+      const btn20 = document.getElementById(`btn-dur-20`);
+      const mHint = document.getElementById(`marker-hint`);
+      const mFelix = document.getElementById(`marker-felix`);
+      const mGate = document.getElementById(`marker-gate`);
+      const mStart = document.getElementById(`marker-start`);
+      const c1 = document.getElementById(`clue-tier-1`);
+      const c2 = document.getElementById(`clue-tier-2`);
+      const c3 = document.getElementById(`clue-tier-3`);
+
+      const rem = appState.secondsRemaining;
+      const total = Math.max(1, appState.durationTotal);
+      const pct = Math.max(0, Math.min(100, Math.round((rem / total) * 100)));
+
+      if (display) {
+        display.textContent = formatTime(rem);
+        display.classList.remove(`phase-hint`, `phase-felix`, `phase-gate`);
+      }
+
+      if (toggleBtn) {
+        toggleBtn.textContent = appState.timerRunning ? `Pause Clock` : (rem < total && rem > 0 ? `Resume Clock` : `Start Clock`);
+      }
+
+      if (modeLabel) {
+        modeLabel.textContent = total === 1200 ? `20-Minute Extended` : `10-Minute Trial`;
+      }
+      if (mStart) {
+        mStart.textContent = total === 1200 ? `Start · 20:00` : `Start · 10:00`;
+      }
+      if (btn10 && btn20) {
+        btn10.classList.toggle(`active-preset`, total === 600);
+        btn20.classList.toggle(`active-preset`, total === 1200);
+      }
+
+      if (barFill) {
+        barFill.style.transform = `scaleX(${pct / 100})`;
+        barFill.classList.remove(`phase-hint`, `phase-felix`, `phase-gate`);
+      }
+      if (progressBar) {
+        progressBar.setAttribute(`aria-valuenow`, String(pct));
+      }
+
+      if (mHint) mHint.classList.remove(`active-cue`);
+      if (mFelix) mFelix.classList.remove(`active-cue`);
+      if (mGate) mGate.classList.remove(`active-cue`);
+      if (c1) c1.classList.remove(`clue-unlocked`);
+      if (c2) c2.classList.remove(`clue-unlocked`);
+      if (c3) c3.classList.remove(`clue-unlocked`);
+
+      if (alertBox) {
+        alertBox.classList.remove(`cue-hint`, `cue-felix`, `cue-gate`);
+        if (rem === 0) {
+          if (display) display.classList.add(`phase-gate`);
+          if (barFill) barFill.classList.add(`phase-gate`);
+          if (mGate) mGate.classList.add(`active-cue`);
+          if (c1) c1.classList.add(`clue-unlocked`);
+          if (c2) c2.classList.add(`clue-unlocked`);
+          if (c3) c3.classList.add(`clue-unlocked`);
+          alertBox.classList.add(`cue-gate`);
+          alertBox.innerHTML = `<strong>00:00 · Stage 1 Debrief Gate:</strong> Ensure every House displays its White Ribbon! Use the Soft Gate Rescue Key in the Hint Drawer if needed.`;
+        } else if (rem <= 60) {
+          if (display) display.classList.add(`phase-gate`);
+          if (barFill) barFill.classList.add(`phase-gate`);
+          if (mGate) mGate.classList.add(`active-cue`);
+          if (c1) c1.classList.add(`clue-unlocked`);
+          if (c2) c2.classList.add(`clue-unlocked`);
+          if (c3) c3.classList.add(`clue-unlocked`);
+          alertBox.classList.add(`cue-gate`);
+          alertBox.innerHTML = `<strong>01:00 Soft Stage Gate:</strong> Final 60 seconds! Open the Keeper’s Hint Drawer for the rescue key so every table earns the White Ribbon.`;
+        } else if (rem <= 180) {
+          if (display) display.classList.add(`phase-felix`);
+          if (barFill) barFill.classList.add(`phase-felix`);
+          if (mFelix) mFelix.classList.add(`active-cue`);
+          if (c1) c1.classList.add(`clue-unlocked`);
+          if (c2) c2.classList.add(`clue-unlocked`);
+          alertBox.classList.add(`cue-felix`);
+          alertBox.innerHTML = `<strong>03:00 Felix Felicis (“Liquid Luck”) Alert:</strong> Lagging tables may request or unlock a targeted Liquid Luck nudge in the Hint Drawer.`;
+        } else if (rem <= 300) {
+          if (display) display.classList.add(`phase-hint`);
+          if (barFill) barFill.classList.add(`phase-hint`);
+          if (mHint) mHint.classList.add(`active-cue`);
+          if (c1) c1.classList.add(`clue-unlocked`);
+          alertBox.classList.add(`cue-hint`);
+          alertBox.innerHTML = `<strong>05:00 Professor’s Room Hint Alert:</strong> Halfway mark reached. Check Tier 1 in the Hint Drawer if your table needs a nudge on the unplugged rules.`;
+        } else {
+          alertBox.innerHTML = `<strong>Pacing Status:</strong> Chamber open. Design your unplugged game framework and copy your Gemini incantation before the 5-minute checkpoint.`;
+        }
+      }
+    }
+
+    function selectVector(vectorKey) {
+      if (!VECTOR_DATA[vectorKey]) return;
+      appState.vector = vectorKey;
+      const btns = document.querySelectorAll(`.vector-btn`);
+      btns.forEach(function (btn) {
+        btn.classList.toggle(`active`, btn.dataset.vector === vectorKey);
+      });
+      renderIncantation();
+      persistState();
+    }
+
+    const PRESETS = {
+      fractions: {
+        grade: `3–5 Upper Elementary (Ages 8–11)`,
+        subject: `Mathematics`,
+        topic: `Equivalent fractions & comparing denominators`,
+        vector: `dice`
+      },
+      ecosystems: {
+        grade: `6–8 Middle School (Ages 11–14)`,
+        subject: `Science & Inquiry`,
+        topic: `Ecosystem food webs & energy transfer`,
+        vector: `cards`
+      },
+      industrial: {
+        grade: `9–12 High School (Ages 14–18)`,
+        subject: `Social Studies & History`,
+        topic: `Causes of the Industrial Revolution`,
+        vector: `path`
+      }
+    };
+
+    function applyPreset(presetKey) {
+      const preset = PRESETS[presetKey];
+      if (!preset) return;
+      appState.grade = preset.grade;
+      appState.subject = preset.subject;
+      appState.topic = preset.topic;
+      appState.vector = preset.vector;
+
+      const selGrade = document.getElementById(`sel-grade`);
+      const selSubject = document.getElementById(`sel-subject`);
+      const inpTopic = document.getElementById(`inp-topic`);
+      if (selGrade) selGrade.value = preset.grade;
+      if (selSubject) selSubject.value = preset.subject;
+      if (inpTopic) inpTopic.value = preset.topic;
+
+      selectVector(preset.vector);
+    }
+
+    function updateGenerator() {
+      const selGrade = document.getElementById(`sel-grade`);
+      const selSubject = document.getElementById(`sel-subject`);
+      const inpTopic = document.getElementById(`inp-topic`);
+      const selAi = document.getElementById(`sel-ai`);
+
+      if (selGrade) appState.grade = selGrade.value;
+      if (selSubject) appState.subject = selSubject.value;
+      if (inpTopic) appState.topic = inpTopic.value;
+      if (selAi) appState.aiTarget = selAi.value;
+
+      renderIncantation();
+      persistState();
+    }
+
+    function buildIncantationText() {
+      const houseName = (HOUSE_DATA[appState.house] || HOUSE_DATA.gryffindor).name;
+      const vec = VECTOR_DATA[appState.vector] || VECTOR_DATA.dice;
+      const topicText = appState.topic && appState.topic.trim() !== ``
+        ? appState.topic.trim()
+        : `a foundational unit skill in ${appState.subject}`;
+
+      const canvasNote = appState.aiTarget === `Google Gemini`
+        ? `Keep this Stage 1 blueprint 100% unplugged (no screens or Wi-Fi required for students), and format it cleanly so we can transfigure it into an interactive Gemini Canvas HTML preview in Stage 2.`
+        : `Keep this Stage 1 blueprint 100% unplugged (no screens or Wi-Fi required for students), and structure the rules cleanly so we can later convert it into a standalone offline HTML game in Stage 2.`;
+
+      return `You are an expert instructional game designer assisting House ${houseName} in the Muggle Studies Trial (Stage 1: Unplugged Craft).
+
+Design a complete, 100% unplugged classroom tabletop game using ONLY physical materials: ${vec.props}.
+
+TARGET CLASSROOM PROFILE:
+- Grade Band: ${appState.grade}
+- Content Subject: ${appState.subject}
+- Specific Topic / Standard: ${topicText}
+- Core Game Mechanic Vector: ${vec.label}
+
+GAME DESIGN CONSTRAINTS:
+1. Unplugged & Reliable: Zero devices, zero internet, and zero printable worksheets required—teachers and students can prep it with dice, index cards, and sticky notes in 5 minutes.
+2. Mechanic Focus: ${vec.mechanicInstruction}
+3. Pedagogical Rigor: Include a built-in peer-explanation or error-check rule so students cannot advance by luck alone—they must demonstrate mastery of "${topicText}".
+4. Quick-Play Format: 15–20 minute small-group round for 2–4 players.
+
+OUTPUT FORMAT:
+- Game Title & 1-Sentence Hook
+- 5-Minute Physical Table Setup (exact card counts & sticky-note layout)
+- Step-by-Step Turn Sequence (numbered, student-friendly)
+- Win Condition & Tie-Breaker
+- 6 Sample Ready-to-Write Index Card Prompts (ranging from foundational to challenge)
+- 2 Quick Differentiation Tweaks (scaffold + extension)
+
+${canvasNote}`;
+    }
+
+    function renderIncantation() {
+      const text = buildIncantationText();
+      const outEl = document.getElementById(`incantation-output`);
+      const badgeEl = document.getElementById(`prompt-target-badge`);
+      const statsEl = document.getElementById(`prompt-stats`);
+
+      if (outEl) outEl.textContent = text;
+      if (badgeEl) badgeEl.textContent = `Incantation Prepared for ${appState.aiTarget}`;
+      if (statsEl) {
+        const words = text.trim().split(/\s+/).length;
+        statsEl.textContent = `${words} words · Unplugged Ready`;
+      }
+    }
+
+    async function copyIncantation() {
+      const outEl = document.getElementById(`incantation-output`);
+      const statusEl = document.getElementById(`copy-status`);
+      if (!outEl) return;
+      const text = outEl.textContent || ``;
+
+      let copied = false;
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === `function`) {
+        try {
+          await navigator.clipboard.writeText(text);
+          copied = true;
+        } catch (err) {
+          copied = false;
+        }
+      }
+
+      if (!copied) {
+        const tempArea = document.createElement(`textarea`);
+        tempArea.value = text;
+        tempArea.setAttribute(`readonly`, `readonly`);
+        tempArea.style.position = `fixed`;
+        tempArea.style.left = `-9999px`;
+        document.body.appendChild(tempArea);
+        tempArea.select();
+        try {
+          copied = document.execCommand(`copy`);
+        } catch (err) {
+          copied = false;
+        }
+        document.body.removeChild(tempArea);
+      }
+
+      if (statusEl) {
+        statusEl.classList.remove(`error-text`);
+        if (copied) {
+          statusEl.textContent = `Incantation copied for ${appState.aiTarget}!`;
+        } else {
+          statusEl.classList.add(`error-text`);
+          statusEl.textContent = `Select text above and press Ctrl+C / Cmd+C to copy.`;
+        }
+      }
+    }
+
+    function toggleKitProp(propKey, checked) {
+      appState.kitProps[propKey] = Boolean(checked);
+      renderKitProgress();
+      renderScoreLedger();
+      persistState();
+    }
+
+    function renderKitProgress() {
+      const keys = [`dice`, `cards`, `notes`, `map`];
+      let count = 0;
+      keys.forEach(function (k) {
+        const chk = document.querySelector(`.kit-chk[data-prop="${k}"]`);
+        const val = Boolean(appState.kitProps && appState.kitProps[k]);
+        if (chk) chk.checked = val;
+        if (val) count += 1;
+      });
+      const prog = document.getElementById(`kit-progress`);
+      if (prog) prog.textContent = `${count} / 4 Ready`;
+    }
+
+    function handleLockKey(event) {
+      if (event && event.key === `Enter`) {
+        verifyChamberCode();
+      }
+    }
+
+    function verifyChamberCode() {
+      const inp = document.getElementById(`inp-lock-code`);
+      const feedback = document.getElementById(`lock-feedback`);
+      if (!inp) return;
+
+      const raw = inp.value || ``;
+      const normalized = raw.toUpperCase().replace(/\s+/g, ``);
+
+      if (normalized === ``) {
+        if (feedback) {
+          feedback.classList.add(`error-text`);
+          feedback.textContent = `Enter the 3-part Stage 1 passcode (e.g., 32-WHITE). Check the Hint Drawer if stuck.`;
+        }
+        return;
+      }
+
+      if (VALID_CODES.has(normalized)) {
+        appState.unlocked = true;
+        if (feedback) {
+          feedback.classList.remove(`error-text`);
+          feedback.textContent = ``;
+        }
+        renderLockState();
+        renderScoreLedger();
+        persistState();
+      } else {
+        if (feedback) {
+          feedback.classList.add(`error-text`);
+          feedback.textContent = `“${raw}” did not unseal the vault. Hint: Class # (3) + Dice count (2) + Stage 1 Ribbon color.`;
+        }
+      }
+    }
+
+    function relockChamber(btn) {
+      if (!btn) return;
+      if (btn.dataset.armed !== `true`) {
+        btn.dataset.armed = `true`;
+        btn.textContent = `Confirm Relock`;
+        window.setTimeout(function () {
+          if (btn.dataset.armed === `true`) {
+            btn.dataset.armed = `false`;
+            btn.textContent = `Relock Vault`;
+          }
+        }, 3500);
+        return;
+      }
+      btn.dataset.armed = `false`;
+      btn.textContent = `Relock Vault`;
+      appState.unlocked = false;
+      renderLockState();
+      persistState();
+    }
+
+    function renderLockState() {
+      const lockPanel = document.getElementById(`chamber-lock-panel`);
+      const certPanel = document.getElementById(`certificate-panel`);
+      const badge = document.getElementById(`masthead-lock-badge`);
+
+      if (lockPanel) lockPanel.classList.toggle(`hidden`, Boolean(appState.unlocked));
+      if (certPanel) certPanel.classList.toggle(`hidden`, !appState.unlocked);
+
+      if (badge) {
+        if (appState.unlocked) {
+          badge.textContent = `Stage 1 Unsealed · White Ribbon Earned`;
+          badge.classList.remove(`locked-badge`);
+          badge.classList.add(`unlocked-badge`);
+        } else {
+          badge.textContent = `Vault Sealed · White Ribbon Pending`;
+          badge.classList.remove(`unlocked-badge`);
+          badge.classList.add(`locked-badge`);
+        }
+      }
+    }
+
+    function updateCertDetails() {
+      const namesInp = document.getElementById(`inp-educator-names`);
+      const speedSel = document.getElementById(`sel-speed-rank`);
+      const adapt1El = document.getElementById(`txt-adapt-1`);
+      const adapt2El = document.getElementById(`txt-adapt-2`);
+
+      if (namesInp) appState.educatorNames = namesInp.value;
+      if (speedSel) appState.speedRank = speedSel.value;
+      if (adapt1El) appState.adapt1 = adapt1El.value;
+      if (adapt2El) appState.adapt2 = adapt2El.value;
+
+      renderScoreLedger();
+      persistState();
+    }
+
+    function toggleFelixAdjustment(checked) {
+      appState.felixUsed = Boolean(checked);
+      renderScoreLedger();
+      persistState();
+    }
+
+    function renderScoreLedger() {
+      const houseInfo = HOUSE_DATA[appState.house] || HOUSE_DATA.gryffindor;
+      const certCite = document.getElementById(`cert-citation`);
+      const namesInp = document.getElementById(`inp-educator-names`);
+      const speedSel = document.getElementById(`sel-speed-rank`);
+      const adapt1El = document.getElementById(`txt-adapt-1`);
+      const adapt2El = document.getElementById(`txt-adapt-2`);
+      const felixChk = document.getElementById(`chk-felix-used`);
+
+      if (namesInp && namesInp.value !== appState.educatorNames) namesInp.value = appState.educatorNames;
+      if (speedSel && speedSel.value !== String(appState.speedRank)) speedSel.value = String(appState.speedRank);
+      if (adapt1El && adapt1El.value !== appState.adapt1) adapt1El.value = appState.adapt1;
+      if (adapt2El && adapt2El.value !== appState.adapt2) adapt2El.value = appState.adapt2;
+      if (felixChk) felixChk.checked = Boolean(appState.felixUsed);
+
+      if (certCite) {
+        const who = appState.educatorNames && appState.educatorNames.trim() !== ``
+          ? `${appState.educatorNames.trim()} of House ${houseInfo.name}`
+          : `House ${houseInfo.name}`;
+        certCite.innerHTML = `This certifies that <strong>${who}</strong> has mastered the Stage 1 Muggle Studies Trial, forged an unplugged classroom game, and unlocked the path to Stage 2 Transfiguration.`;
+      }
+
+      const completionPts = 25;
+      const hatstallPts = appState.hatstall ? 5 : 0;
+      const readinessPts = appState.kitProps && appState.kitProps.map ? 5 : 0;
+      const prepPts = hatstallPts + readinessPts;
+      const speedPts = parseInt(appState.speedRank, 10) || 0;
+      const keeperEarned = Boolean(appState.adapt1 && appState.adapt1.trim().length > 2 && appState.adapt2 && appState.adapt2.trim().length > 2);
+      const keeperPts = keeperEarned ? 15 : 0;
+      const felixPts = appState.felixUsed ? -5 : 0;
+      const total = completionPts + prepPts + speedPts + keeperPts + felixPts;
+
+      const prepEl = document.getElementById(`score-bonus-prep`);
+      const speedEl = document.getElementById(`score-speed`);
+      const keeperEl = document.getElementById(`score-keeper`);
+      const felixEl = document.getElementById(`score-felix`);
+      const totalEl = document.getElementById(`score-total`);
+
+      if (prepEl) prepEl.textContent = `+${prepPts}`;
+      if (speedEl) speedEl.textContent = `+${speedPts}`;
+      if (keeperEl) keeperEl.textContent = keeperEarned ? `+15` : `+0`;
+      if (felixEl) felixEl.textContent = `${felixPts}`;
+      if (totalEl) totalEl.textContent = `${total}`;
+    }
+
+    function toggleHintDrawer() {
+      appState.drawerOpen = !appState.drawerOpen;
+      renderHintDrawer();
+      persistState();
+    }
+
+    function renderHintDrawer() {
+      const btn = document.getElementById(`btn-hint-drawer`);
+      const body = document.getElementById(`hint-drawer-body`);
+      const stateLabel = document.getElementById(`hint-drawer-state`);
+      if (body) body.classList.toggle(`hidden`, !appState.drawerOpen);
+      if (btn) btn.setAttribute(`aria-expanded`, appState.drawerOpen ? `true` : `false`);
+      if (stateLabel) stateLabel.textContent = appState.drawerOpen ? `Open · 3 Clues` : `Closed · 3 Clues`;
+    }
+
+    function downloadFieldRecord() {
+      const houseInfo = HOUSE_DATA[appState.house] || HOUSE_DATA.gryffindor;
+      const incantation = buildIncantationText();
+      const totalEl = document.getElementById(`score-total`);
+      const totalScore = totalEl ? totalEl.textContent : `25`;
+
+      const record = `ORDER OF MERLIN PD — STAGE 1 FIELD RECORD
+==================================================
+Award: Order of Merlin, Third Class (White Ribbon)
+Stage: Stage 1 — Muggle Studies (Unplugged Craft)
+House: ${houseInfo.name}
+Educators: ${appState.educatorNames || `Table Team`}
+Time Remaining at Export: ${formatTime(appState.secondsRemaining)}
+Projected Stage 1 Points: ${totalScore}
+
+KEEPER'S BONUS TRIAL #1 — CLASSROOM ADAPTATIONS
+1. ${appState.adapt1 || `(Not recorded)`}
+2. ${appState.adapt2 || `(Not recorded)`}
+
+STAGE 1 GEMINI INCANTATION
+--------------------------------------------------
+${incantation}
+`;
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === `function`) {
+        window.notebookAppApi.triggerFileDownload({
+          content: record,
+          contentType: `text/plain`,
+          encoding: `UTF-8`,
+          filename: `Order_of_Merlin_Stage1_${houseInfo.name}.txt`
+        });
+        return;
+      }
+
+      const blob = new Blob([record], { type: `text/plain;charset=utf-8` });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement(`a`);
+      link.href = url;
+      link.download = `Order_of_Merlin_Stage1_${houseInfo.name}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function printCertificate() {
+      window.print();
+    }
+
+    function applyRestoredInputs() {
+      const selGrade = document.getElementById(`sel-grade`);
+      const selSubject = document.getElementById(`sel-subject`);
+      const inpTopic = document.getElementById(`inp-topic`);
+      const selAi = document.getElementById(`sel-ai`);
+
+      if (selGrade) selGrade.value = appState.grade;
+      if (selSubject) selSubject.value = appState.subject;
+      if (inpTopic) inpTopic.value = appState.topic;
+      if (selAi) selAi.value = appState.aiTarget;
+
+      const btns = document.querySelectorAll(`.vector-btn`);
+      btns.forEach(function (btn) {
+        btn.classList.toggle(`active`, btn.dataset.vector === appState.vector);
+      });
+    }
+
+    async function initApp() {
+      if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === `function`) {
+        try {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && typeof saved === `object`) {
+            appState = Object.assign({}, appState, saved);
+            if (!appState.kitProps || typeof appState.kitProps !== `object`) {
+              appState.kitProps = { dice: false, cards: false, notes: false, map: false };
+            }
+          }
+        } catch (err) {
+          /* Fall back cleanly to default state */
+        }
+      }
+
+      applyRestoredInputs();
+      renderHouse();
+      renderTimer();
+      if (appState.timerRunning && appState.secondsRemaining > 0) {
+        startTimerInterval();
+      } else {
+        appState.timerRunning = false;
+      }
+      renderIncantation();
+      renderKitProgress();
+      renderLockState();
+      renderScoreLedger();
+      renderHintDrawer();
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === `function`) {
+        window.notebookAppApi.notifyAppReady();
+      }
+    }
+
+    document.addEventListener(`DOMContentLoaded`, initApp);
+  </script>
+</body>
+</html>
