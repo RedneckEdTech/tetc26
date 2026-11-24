@@ -113,6 +113,13 @@
             color: #00FF41; 
             position: relative;
             z-index: 5;
+            overflow: hidden;
+        }
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            display: block;
+            background: #000;
         }
         
         /* Navigation Bar */
@@ -171,7 +178,7 @@
     <div id="stage-2" class="hidden">
         <h2 id="pathTitle"></h2>
         
-        <!-- Video Placeholder -->
+        <!-- Video Container -->
         <div class="video-container" id="videoBox">
             [ENCRYPTED VIDEO TUTORIAL STREAM]
         </div>
@@ -313,8 +320,20 @@
             }
         }
 
+        function stopVideo() {
+            const vid = document.getElementById('tutorialVideo');
+            if (vid) {
+                vid.pause();
+                vid.currentTime = 0;
+            }
+        }
+
         // Global Back Function
         function goBack(currentStageId, previousStageId) {
+            if (currentStageId === 'stage-2') {
+                stopVideo();
+            }
+
             const currentStage = document.getElementById(currentStageId);
             const previousStage = document.getElementById(previousStageId);
             
@@ -352,7 +371,7 @@
 
             if (choice === 'game') {
                 title.innerText = "VECTOR: GAMIFIED EXPLOIT";
-                videoBox.innerHTML = "[ENCRYPTED GAME TUTORIAL STREAM]";
+                videoBox.innerHTML = `<video id="tutorialVideo" src="interactive-review-game.mp4" controls autoplay playsinline controlsList="nodownload" oncontextmenu="return false;"></video>`;
                 promptText.innerText = `Act as an expert educational web developer. Build a highly engaging interactive review game (like a trivia challenge, reaction game, or retro arcade game) with a scoring system and a win/loss state. Optional: Include game mechanics variables such as sudden death or team vs team.
 
 ${sourceText}
@@ -360,7 +379,7 @@ ${sourceText}
 Output as a single vanilla HTML file with inline CSS/JS and no local assets. Do NOT use CDNs like Tailwind, FontAwesome, or Tone.js.`;
             } else if (choice === 'activity') {
                 title.innerText = "VECTOR: INTERACTIVE SANDBOX";
-                videoBox.innerHTML = "[ENCRYPTED ACTIVITY TUTORIAL STREAM]";
+                videoBox.innerHTML = `<video id="tutorialVideo" src="interactive-activity.mp4" controls autoplay playsinline controlsList="nodownload" oncontextmenu="return false;"></video>`;
                 promptText.innerText = `Act as an expert educational web developer. Build a highly engaging interactive activity (like a drag-and-drop matcher, clickable flashcard grid, or interactive diagram).
 
 ${sourceText}
@@ -382,6 +401,7 @@ Output as a single vanilla HTML file with inline CSS/JS and no local assets. Do 
         }
 
         function unlockOSCheck() {
+            stopVideo();
             document.getElementById('stage-2').classList.add('hidden');
             const stage3 = document.getElementById('stage-3');
             stage3.classList.remove('hidden');
