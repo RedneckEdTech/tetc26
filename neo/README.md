@@ -13,4 +13,5 @@
 
 
 ### Wild West Themed Session (tsin repository)
-
+**index.html -    List of 30 takeaways for new teachers to help save their sanity.**  
+  Called 30 Days and 30 Ways to Stay in the Saddle
