@@ -7,19 +7,20 @@
 - BREACH-01
 **201.html - Take .html file from 101 or sample provided and host online for school LMS**  
 - UPLINK-02
-
-
-
+  
+  
+  
 ## Harry Potter Themed Session (oom repository)
 **index.html - Interactive escape room .html file for the Order of Merlin.**  
 Stage 1 - muggle_studies.html | Create a stand-alone activity or game using AI over a specific topic  
 Stage 2 - tansfiguration.html | Create a digital activity or game from Stage 1  
 Stage 3 - charms.html | Host digital artifact and package both analog game rules and digital artifact  
-
-
-
+  
+  
+  
 ## Wild West Themed Session (tsin repository)
 **index.html - List of 30 takeaways for new teachers to help save their sanity.**  
 "30 Days and 30 Ways to Stay in the Saddle"
-
-
+  
+  
+  
