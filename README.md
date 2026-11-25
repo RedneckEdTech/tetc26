@@ -3,7 +3,9 @@
 ### Matrix Themed Sessions (neo repository)
 **index.html - Operative login with red or blue pill decision**  
 **101.html - Create stand-alone vanilla .html file for game or activity using AI**  
+- BREACH-01  
 **201.html - Take .html file from 101 or sample provided and host online for school LMS**  
+- UPLINK-02  
 
 ### Harry Potter Themed Session (oom repository)
 **index.html - Interactive escape room .html file for the Order of Merlin.**  
