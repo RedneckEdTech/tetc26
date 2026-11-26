@@ -85,7 +85,7 @@
         }
         
         /* Layout & Animation */
-        .hidden { display: none; }
+        .hidden { display: none !important; }
         .fade-in { animation: fadeIn 0.8s ease-in forwards; }
         @keyframes fadeIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
         
@@ -126,6 +126,31 @@
         .nav-bar { display: flex; justify-content: center; align-items: center; margin-top: 20px; gap: 20px; flex-wrap: wrap; position: relative; z-index: 10; }
         
         .warning-text { color: #ff003c; text-shadow: 0 0 5px rgba(255, 0, 60, 0.5); }
+
+        /* Reboot Screen (Blue Pill Sequence) */
+        #reboot-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            text-align: left;
+            padding: 40px;
+            box-sizing: border-box;
+            background-color: #000;
+        }
+
+        .reboot-line {
+            font-size: 22px;
+            margin: 5px 0;
+            color: #d3d3d3;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
@@ -244,10 +269,14 @@
         
         <div class="nav-bar">
             <button onclick="goBack('stage-5', 'stage-4')">< ABORT</button>
-            <!-- Replace the '#' with your actual Google Form Link -->
             <button onclick="window.open('https://padlet.com/redneckedtech/node-01-local-infiltration-proxy-server-accessed-s025t9rrw3ak7pb3o4i7', '_blank')">ACCESS PROXY SERVER</button>
-            <button onclick="window.location.href='https://padlet.com/redneckedtech/node-01-local-infiltration-proxy-server-accessed-s025t9rrw3ak7pb3o4i7'">TRANSMISSION: SUCCESSFUL</button>
+            <button onclick="transmissionSuccessful()">TRANSMISSION: SUCCESSFUL</button>
         </div>
+    </div>
+
+    <!-- STAGE 6: Reboot Sequence (Blue Pill Exit) -->
+    <div id="reboot-screen" class="hidden">
+        <div id="reboot-console"></div>
     </div>
 
     <script>
@@ -431,6 +460,44 @@ Output as a single vanilla HTML file with inline CSS/JS and no local assets. Do 
             const stage5 = document.getElementById('stage-5');
             stage5.classList.remove('hidden');
             stage5.classList.add('fade-in');
+        }
+
+        /* --- Blue Pill Reboot Sequence --- */
+        async function transmissionSuccessful() {
+            document.getElementById("stage-5").classList.add("hidden");
+            document.getElementById("matrix-canvas").classList.add("hidden");
+            
+            // Switch styles to generic BIOS hacker reboot
+            document.body.style.backgroundColor = "#000";
+            document.body.style.color = "#d3d3d3";
+            document.body.style.padding = "0";
+            const rebootScreen = document.getElementById("reboot-screen");
+            rebootScreen.classList.remove("hidden");
+            
+            const rebootLines = [
+                "INITIATING KERNEL REBOOT...",
+                "LOADING BIOS v4.20.69...",
+                "CHECKING MEMORY... OK",
+                "FLUSHING CACHE... OK",
+                "WIPING TRACE LOGS... OK",
+                "DISCONNECTING NEURAL LINK...",
+                "SYSTEM HALTED.",
+                "REBOOTING..."
+            ];
+            
+            const consoleDiv = document.getElementById("reboot-console");
+            
+            for(let line of rebootLines) {
+                const p = document.createElement("div");
+                p.className = "reboot-line";
+                p.innerText = line;
+                consoleDiv.appendChild(p);
+                await new Promise(r => setTimeout(r, 300 + Math.random() * 600));
+            }
+            
+            setTimeout(() => {
+                window.location.href = "https://www.google.com";
+            }, 800);
         }
     </script>
 </body>
